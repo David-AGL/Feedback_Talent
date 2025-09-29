@@ -3,11 +3,13 @@ import Login from "./pages/Login.tsx";
 import SurveyEmploye from "./pages/SurveyEmploye.tsx";
 import SurveyCandidate from "./pages/SurveyCandidate.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
+import Register from "./pages/Register.tsx";
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Login />} />
+      <Route path="/register" element={<Register />} />
       <Route path="/surveyemploye" element={<SurveyEmploye />} />
       <Route path="/surveycandidate" element={<SurveyCandidate />} />
       <Route path="/dashboard" element={<Dashboard />} />
