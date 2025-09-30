@@ -1,0 +1,92 @@
+[
+  {
+    "contenido": "¿Qué tan satisfecho(a) está con la compensación económica actual?",
+    "tipo": "rating",
+    "obligatoria": true,
+    "categoria": "Salarios y beneficios"
+  },
+  {
+    "contenido": "¿Considera que los beneficios adicionales (salud, educación, flexibilidad, etc.) cubren sus necesidades?",
+    "tipo": "rating",
+    "obligatoria": true,
+    "categoria": "Salarios y beneficios"
+  },
+  {
+    "contenido": "¿Cómo calificaría la puntualidad y precisión de los pagos?",
+    "tipo": "rating",
+    "obligatoria": true,
+    "categoria": "Salarios y beneficios"
+  },
+  {
+    "contenido": "¿Cómo calificaría el clima laboral en su área de trabajo?",
+    "tipo": "rating",
+    "obligatoria": true,
+    "categoria": "Cultura empresarial y ambiente laboral"
+  },
+  {
+    "contenido": "¿Cree que la cultura y valores de la empresa se practican de manera real y no solo en el discurso?",
+    "tipo": "rating",
+    "obligatoria": true,
+    "categoria": "Cultura empresarial y ambiente laboral"
+  },
+  {
+    "contenido": "¿Qué tan conectado se siente con los valores y la misión de la empresa?",
+    "tipo": "rating",
+    "obligatoria": true,
+    "categoria": "Cultura empresarial y ambiente laboral"
+  },
+  {
+    "contenido": "¿Qué tan satisfecho(a) está con las oportunidades de capacitación y crecimiento dentro de la empresa?",
+    "tipo": "rating",
+    "obligatoria": true,
+    "categoria": "Desarrollo y prospectiva profesional"
+  },
+  {
+    "contenido": "¿Siente que la empresa promueve planes de carrera claros y accesibles para los empleados?",
+    "tipo": "rating",
+    "obligatoria": true,
+    "categoria": "Desarrollo y prospectiva profesional"
+  },
+  {
+    "contenido": "¿Qué tan efectivos considera los procesos internos de comunicación en la empresa?",
+    "tipo": "rating",
+    "obligatoria": true,
+    "categoria": "Procesos internos y gestión"
+  },
+  {
+    "contenido": "¿Cómo calificaría la eficiencia de los procesos administrativos (nómina, permisos, evaluaciones, etc.)?",
+    "tipo": "rating",
+    "obligatoria": true,
+    "categoria": "Procesos internos y gestión"
+  },
+  {
+    "contenido": "¿La organización ha proporcionado en todo momento las herramientas que necesita para completar sus funciones correctamente?",
+    "tipo": "rating",
+    "obligatoria": true,
+    "categoria": "Procesos internos y gestión"
+  },
+  {
+    "contenido": "¿Se siente motivado(a) y reconocido(a) en su rol dentro de la organización?",
+    "tipo": "rating",
+    "obligatoria": true,
+    "categoria": "Motivación y compromiso"
+  },
+  {
+    "contenido": "¿Recomendaría la empresa como un buen lugar para trabajar?",
+    "tipo": "rating",
+    "obligatoria": true,
+    "categoria": "Motivación y compromiso"
+  },
+  {
+    "contenido": "¿Considera que la empresa promueve un equilibrio saludable entre el trabajo y la vida personal?",
+    "tipo": "rating",
+    "obligatoria": true,
+    "categoria": "Motivación y compromiso"
+  },
+  {
+    "contenido": "¿Qué mejoras considera necesarias para que la empresa sea un mejor lugar de trabajo?",
+    "tipo": "text",
+    "obligatoria": false,
+    "categoria": "Pregunta abierta"
+  }
+]

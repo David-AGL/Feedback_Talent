@@ -1,7 +1,14 @@
-import mongoose from "mongoose";  // Importa Mongoose para definir esquemas de MongoDB
+import mongoose, {Schema, Document} from "mongoose";  // Importa Mongoose para definir esquemas de MongoDB
+
+interface IPregunta extends Document {
+  contenido: string;
+  tipo: "rating" | "text" | "slider";
+  obligatoria: boolean;
+  categoria: string;
+}
 
 // Define el esquema para las preguntas de candidatos
-const candidateQuestionsSchema = new mongoose.Schema({  // Crea un nuevo esquema
+const candidateQuestionsSchema: Schema<IPregunta> = new mongoose.Schema({  // Crea un nuevo esquema
   contenido: {  // Campo para el texto de la pregunta
     type: String,  // Tipo de dato: cadena de texto
     required: true,  // Requerido: true
@@ -22,4 +29,4 @@ const candidateQuestionsSchema = new mongoose.Schema({  // Crea un nuevo esquema
 }, { timestamps: true });  // Agrega timestamps automáticos (createdAt, updatedAt)
 
 // Exporta el modelo para usarlo en rutas
-export default mongoose.model("candidateQuestions", candidateQuestionsSchema);  // Crea y exporta el modelo 'PreguntaCandidate'
+export default mongoose.model<IPregunta>("candidateQuestions", candidateQuestionsSchema, "candidateQuestions");  // Crea y exporta el modelo 'PreguntaCandidate'

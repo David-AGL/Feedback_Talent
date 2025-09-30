@@ -1,124 +1,118 @@
-import { useForm, Controller } from "react-hook-form";  // Para manejar formularios y validaciones
-import { Button, TextField, Typography, Box, Rating, Paper } from "@mui/material";  // UI con Material-UI
-import { submitSurvey } from "../services/api";  // Servicio que envía los datos
-import { useNavigate } from "react-router-dom";  // Para redirigir después de enviar
+import { useForm, Controller } from "react-hook-form";
+import { Button, TextField, Typography, Box, Paper, Rating, Slider, Alert } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
-// Interfaz del formulario de encuesta
 interface SurveyForm {
-  processRating: number;
-  comments: string;
+  [key: string]: number | string;
 }
 
-const Survey = () => {
-  // Inicializa react-hook-form
+const SurveyCandidate = () => {
   const { handleSubmit, control, register, formState: { errors } } = useForm<SurveyForm>();
   const navigate = useNavigate();
+  const [questions, setQuestions] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const userId = localStorage.getItem("userId");
 
-  // 🔹 Aquí defines el array de preguntas de calificación
-  const ratingQuestions = [
-    { name: "processRating", label: "Califica el proceso de selección (1-5)" },
-    { name: "communicationRating", label: "Califica la comunicación con el equipo (1-5)" },
-    { name: "transparencyRating", label: "Califica la transparencia en el proceso (1-5)" }
-  ];
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch("http://localhost:4000/api/preguntas/candidate");
+        const data = await response.json();
+        if (!Array.isArray(data)) throw new Error("Datos inválidos de preguntas");
+        setQuestions(data);
+      } catch (err: any) {
+        setError("Error cargando preguntas de candidatos: " + err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchQuestions();
+  }, []);
 
-  // Función que se ejecuta al enviar la encuesta
   const onSubmit = async (data: SurveyForm) => {
+    setLoading(true);
+    setError(null);
     try {
-      const response = await submitSurvey(data);  // Llama al servicio
-      console.log("Encuesta enviada", response.data);
-      navigate("/dashboard");  // Redirige tras enviar
-    } catch (error) {
-      console.error("Error en encuesta", error);
+      const payload = {
+        idUsuario: userId,
+        rol: "candidate",
+        respuestas: data,
+      };
+      const response = await fetch("http://localhost:4000/api/respuestas/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || "Error al enviar");
+      console.log("Respuestas enviadas", result);
+      navigate("/dashboard");
+    } catch (err: any) {
+      setError(err.message || "Error al enviar encuesta");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <Box 
-      sx={{ 
-        display: 'flex',                // Flexbox para centrar
-        justifyContent: 'center',       // Centrado horizontal
-        alignItems: 'center',           // Centrado vertical
-        minHeight: '100vh',             // Altura mínima: pantalla completa
-        width: '100vw',                 // Ancho completo
-        backgroundColor: 'background.default',  // Usa color del tema
-        p: 2                            // Padding
-      }} 
-    >
-      <Paper
-        elevation={3}  // Sombra
-        sx={{
-          p: 4,                  // Padding interno
-          width: '100%',         // Ocupa todo el ancho disponible
-          maxWidth: 500,         // Máximo ancho
-          display: 'flex',       // Flexbox
-          flexDirection: 'column',
-          alignItems: 'center'   // Centra los elementos dentro de la tarjeta
-        }}
-      >
-        {/* Título */}
-        <Typography 
-          variant="h4" 
-          align="center" 
-          gutterBottom
-        >
-          Encuesta de Proceso de Selección
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', width: '100vw', p: 2 }}>
+      <Paper elevation={3} sx={{ p: 4, width: '100%', maxWidth: 600}}>
+        <Typography variant="h4" align="center" gutterBottom sx={{ mb: 3 }}>
+          Encuesta para Candidatos - Feedback Talent
         </Typography>
-
-        {/* Formulario */}
-        <form 
-          onSubmit={handleSubmit(onSubmit)} 
-          style={{ 
-            width: '100%', 
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'center'  // Centra los elementos del form
-          }}
-        >
-          {/* Recorremos las preguntas de calificación dinámicamente */}
-          {ratingQuestions.map((question) => (
-            <Box key={question.name} sx={{ textAlign: "center", my: 2 }}>
-              <Typography align="center">{question.label}</Typography>
-
-              <Controller
-                name={question.name as keyof SurveyForm}
-                control={control}
-                rules={{ required: true, min: 1, max: 5 }}
-                defaultValue={0}
-                render={({ field: { onChange, value } }) => (
-                  <Rating
-                    name={question.name}
-                    precision={0.5}
-                    value={Number(value)}
-                    onChange={(event, newValue) => onChange(newValue)}
-                    sx={{ mb: 2 }}   // Espaciado inferior
+        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+        <form onSubmit={handleSubmit(onSubmit)}>
+          {loading ? (
+            <Typography align="center">Cargando preguntas...</Typography>
+          ) : questions.length > 0 ? (
+            questions.map((q) => (
+              <Box key={q._id} sx={{ mb: 3 }}>
+                <Typography variant="h6" gutterBottom>{q.contenido}</Typography>
+                {q.tipo === "rating" && (
+                  <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+                    <Controller
+                      name={q._id.toString()} // Usa _id como nombre único
+                      control={control}
+                      rules={{ required: q.obligatoria ? "Requerido" : false }}
+                      defaultValue={0}
+                      render={({ field: { onChange, value } }) => (
+                        <Rating value={Number(value)} onChange={(e, newValue) => onChange(newValue)} precision={0.5} />
+                      )}
+                    />
+                  </Box>  
+                )}
+                {q.tipo === "slider" && (
+                  <Controller
+                    name={q._id.toString()}
+                    control={control}
+                    rules={{ required: q.obligatoria ? "Requerido" : false }}
+                    defaultValue={5}
+                    render={({ field: { onChange, value } }) => (
+                      <Slider value={Number(value)} onChange={(e, newValue) => onChange(newValue as number)} min={1} max={10} step={1} marks valueLabelDisplay="auto" />
+                    )}
                   />
                 )}
-              />
-              {errors[question.name as keyof SurveyForm] && ( 
-                <Typography color="error" align="center">
-                  Calificación requerida
-                </Typography>
-              )}
-            </Box>
-          ))}
-
-          {/* Pregunta de comentarios */}
-          <TextField 
-            label="Comentarios"
-            multiline 
-            rows={4} 
-            fullWidth 
-            {...register("comments")} 
-            sx={{ my: 2 }} 
-          />
-
-          {/* Botón enviar */}
-          <Button 
-            type="submit" 
-            variant="contained" 
-            sx={{ width: "50%" }}  //  Botón más estrecho y centrado
-          >
-            Enviar
+                {q.tipo === "text" && (
+                  <TextField
+                    fullWidth
+                    multiline
+                    rows={4}
+                    {...register(q._id.toString(), { required: q.obligatoria ? "Requerido" : false })}
+                    error={!!errors[q._id.toString()]}
+                    helperText={errors[q._id.toString()]?.message}
+                  />
+                )}
+                {errors[q._id.toString()] && <Typography color="error">{errors[q._id.toString()]?.message}</Typography>}
+              </Box>
+            ))
+          ) : (
+            <Typography align="center">No hay preguntas disponibles.</Typography>
+          )}
+          <Button type="submit" fullWidth variant="contained" color="primary" disabled={loading}>
+            {loading ? "Enviando..." : "Enviar Encuesta"}
           </Button>
         </form>
       </Paper>
@@ -126,4 +120,4 @@ const Survey = () => {
   );
 };
 
-export default Survey;
+export default SurveyCandidate;

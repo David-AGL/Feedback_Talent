@@ -8,9 +8,11 @@ router.get("/:rol", async (req, res) => {  // Define la ruta GET /:rol
     const rol = req.params.rol;  // Obtiene el rol de los parámetros (candidate o employee)
     let PreguntaModel;  // Variable para asignar el modelo correcto
     if (rol === "candidate") {  // Si el rol es candidate
-      PreguntaModel = require("../models/candidateQuestions");  // Usa modelo de candidatos
+      const {default: candidateQuestion} = await import("../models/candidateQuestions.js")
+      PreguntaModel = candidateQuestion;  // Usa modelo de candidatos
     } else if (rol === "employee") {  // Si el rol es employee
-      PreguntaModel = require("../models/employeeQuestions");  // Usa modelo de empleados
+      const {default: employeeQuestion} = await import("../models/employeeQuestions.js")
+      PreguntaModel = employeeQuestion;  // Usa modelo de empleados
     } else {  // Si el rol no es válido
       return res.status(400).json({ message: "Rol inválido" });  // Responde con error
     }
