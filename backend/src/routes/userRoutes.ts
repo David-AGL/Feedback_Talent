@@ -1,36 +1,32 @@
-import { Router } from "express";
-import Usuario from "../models/user.js";
+import express from "express";  // Importa Express para definir rutas
+import { connectDB } from "../config/db.js";  // Importa la conexión a MongoDB (opcional aquí, pero útil para inicialización)
 
-const userRoutes = Router();
+const router = express.Router();  // Crea un enrutador para las rutas de usuarios
 
-// Registrar usuario
-userRoutes.post("/register", async (req, res) => { 
-  try {
-    const { numeroIdentificacion, nombre, email, contrasena, fechaNacimiento, rol, descripcion } = req.body;
+// Conectar a la base de datos (opcional, ya se hace en server.ts)
+connectDB();
 
-    // Validaciones simples
-    if (!nombre || !email || !contrasena) {
-      return res.status(400).json({ message: "Faltan campos obligatorios" });
-    }
-
-    // Crear usuario
-    const nuevoUsuario = new Usuario({
+// Ruta para registrar usuarios
+router.post("/register", async (req, res) => {  // Define la ruta POST /register
+  try {  // Bloque try-catch para manejar la lógica
+    const { numeroIdentificacion, nombre, email, contrasena, fechaNacimiento, rol, descripcion } = req.body;  // Extrae datos del cuerpo
+    const User = require("../models/User");  // Importa dinámicamente el modelo User
+    const newUser = new User({  // Crea una nueva instancia del modelo
       numeroIdentificacion,
       nombre,
       email,
-      contrasena, // luego deberíamos encriptar con bcrypt
-      fechaNacimiento,
+      contrasena,  // Nota: Hashea en producción
+      fechaNacimiento: fechaNacimiento || null,
       rol,
-      descripcion, 
-      
+      descripcion,
     });
-
-    await nuevoUsuario.save();
-
-    res.status(201).json({ message: "Usuario creado con éxito", usuario: nuevoUsuario });
-  } catch (error) {
-    res.status(500).json({ message: "Error al registrar usuario", error });
+    const savedUser = await newUser.save();  // Guarda en MongoDB
+    res.status(201).json({ message: "Usuario registrado exitosamente", user: savedUser });  // Responde con éxito
+  } catch (error: unknown) {  // Captura errores
+    const errorMessage = error instanceof Error ? error.message : "Error desconocido al registrar usuario";  // Maneja mensaje
+    console.error("Error al registrar:", error);  // Registra error
+    res.status(400).json({ message: errorMessage });  // Responde con error
   }
 });
 
-export default userRoutes;
+export default router;  // Exporta el enrutador para usarlo en server.ts

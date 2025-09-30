@@ -11,17 +11,18 @@ export interface IUsuario extends Document {
 
 }
 
-const UsuarioSchema: Schema = new Schema(
+const UserSchema: Schema = new Schema(
   {
     numeroIdentificacion: { type: String, required: true, unique: true },
     nombre: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     contrasena: { type: String, required: true },
-    rol: { type: String, required: true },
-    descripcion: { type: String },
     fechaNacimiento: { type: Date, required: true },
+    rol: { type: String, required: true, enum:["employee", "candidate", "company"] },
+    descripcion: { type: String },
+
   },
   { timestamps: true }
 );
 
-export default mongoose.model<IUsuario>("Usuario", UsuarioSchema);
+export default mongoose.model<IUsuario>("User", UserSchema);

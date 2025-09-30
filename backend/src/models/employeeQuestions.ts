@@ -1,7 +1,7 @@
 import mongoose from "mongoose";  // Importa Mongoose para definir esquemas de MongoDB
 
-// Define el esquema para las preguntas de candidatos
-const candidateQuestionsSchema = new mongoose.Schema({  // Crea un nuevo esquema
+// Define el esquema para las preguntas de empleados
+const employeeQuestionsSchema = new mongoose.Schema({  // Crea un nuevo esquema
   contenido: {  // Campo para el texto de la pregunta
     type: String,  // Tipo de dato: cadena de texto
     required: true,  // Requerido: true
@@ -22,4 +22,4 @@ const candidateQuestionsSchema = new mongoose.Schema({  // Crea un nuevo esquema
 }, { timestamps: true });  // Agrega timestamps automáticos (createdAt, updatedAt)
 
 // Exporta el modelo para usarlo en rutas
-export default mongoose.model("candidateQuestions", candidateQuestionsSchema);  // Crea y exporta el modelo 'PreguntaCandidate'
+export default mongoose.model("employeeQuestions", employeeQuestionsSchema);  // Crea y exporta el modelo 'PreguntaEmployee'

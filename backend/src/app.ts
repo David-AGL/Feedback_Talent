@@ -15,9 +15,4 @@ app.use(cors({
 
 app.use(express.json());
 
-// Rutas
-app.use("/api/feedback", feedbackRoutes);
-app.use("/api/usuarios", userRoutes);
-
-
 export default app;
