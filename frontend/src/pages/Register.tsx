@@ -37,17 +37,33 @@ const Register = () => {  // Componente funcional para la página de registro
     setLoading(true);  // Activa el estado de carga
     setError(null);  // Limpia errores previos
     try {  // Bloque try-catch para manejar la solicitud
-      const payload = {  // Prepara los datos a enviar
-        ...data,  // Incluye todos los campos del formulario
-        role: userType === "person" ? (data as PersonRegisterForm).userType : "company",  // Define el rol
+      const payload = {  
+        numeroIdentificacion: userType === "person" ? (data as PersonRegisterForm).id : (data as CompanyRegisterForm).nit,
+        nombre: userType === "person" ? (data as PersonRegisterForm).name : (data as CompanyRegisterForm).companyName,
+        email: data.email,
+        contrasena: data.password,
+        fechaNacimiento: userType === "person" ? (data as PersonRegisterForm).birthDate : null,
+        rol: userType === "person" ? (data as PersonRegisterForm).userType : "company",
+        descripcion: userType === "company" ? "Empresa registrada" : "Usuario registrado"
       };
-      console.log("Registro exitoso", payload);  // Registra los datos en consola (simulación)
-      navigate("/login");  // Redirige a la página de login
-    } catch (err: any) {  // Captura errores
-      setError(err.response?.data?.message || "Error al registrar usuario");
-    } finally {  // Ejecuta siempre al final
-      setLoading(false);  // Desactiva carga
-    }
+      const res = await fetch("http://localhost:4000/api/usuarios/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.message || "Error en el registro");
+      }
+      console.log("✅ Usuario registrado:", result);
+      navigate("/login"); // Redirige al login solo si se guardó bien
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }    
   };
 
   return (  // Renderiza el componente

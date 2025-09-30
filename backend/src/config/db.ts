@@ -1,14 +1,16 @@
-import { Sequelize } from "sequelize";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
 
-const sequelize = new Sequelize(
-  process.env.DB_NAME || "feedback_db",
-  process.env.DB_USER || "postgres",
-  process.env.DB_PASS || "your_password",
-  {
-    host: process.env.DB_HOST || "localhost",
-    dialect: "postgres",
-    logging: false,
+dotenv.config();
+
+const MONGO_URI = process.env.MONGO_URI as string;
+
+export const connectDB = async () => {
+  try {
+    await mongoose.connect(MONGO_URI);
+    console.log(" Conectado a MongoDB");
+  } catch (error) {
+    console.error("Error al conectar con MongoDB:", error);
+    process.exit(1);
   }
-);
-
-export default sequelize;
+};

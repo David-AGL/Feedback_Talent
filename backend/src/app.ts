@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
 import feedbackRoutes from "./routes/feedbackRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import mongoose from "mongoose";
 
 const app = express();
 
@@ -15,5 +17,7 @@ app.use(express.json());
 
 // Rutas
 app.use("/api/feedback", feedbackRoutes);
+app.use("/api/usuarios", userRoutes);
+
 
 export default app;
