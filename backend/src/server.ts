@@ -1,27 +1,21 @@
-
-import express from "express";
-import { connectDB } from "./config/db.js"; // Importa la conexión a Mongo
+import { connectDB } from "./config/db.js";
 import app from "./app.js";
 import userRoutes from "./routes/userRoutes.js";
-import questionsRoutes from "./routes/questionsRoutes.js"
+import questionsRoutes from "./routes/questionsRoutes.js";
 
-//const app = express();
 const PORT = process.env.PORT || 4000;
 
-// Conectar BD
+// Conectar a la BD
 connectDB();
-
-// Middleware
-app.use(express.json());
 
 // Rutas de prueba
 app.get("/", (req, res) => {
   res.send("API funcionando");
 });
 
-// Monta las rutas en la app
-app.use("/api/usuarios", userRoutes);  // Monta rutas de usuarios bajo /api/usuarios
-app.use("/api/preguntas", questionsRoutes);  // Monta rutas de preguntas bajo /api/preguntas
+// Montar rutas
+app.use("/api/usuarios", userRoutes);
+app.use("/api/preguntas", questionsRoutes);
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);

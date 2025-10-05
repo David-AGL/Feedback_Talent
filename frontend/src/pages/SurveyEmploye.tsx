@@ -7,7 +7,7 @@ interface SurveyForm {
   [key: string]: number | string;
 }
 
-const SurveyCandidate = () => {
+const SurveyEmploye = () => {
   const { handleSubmit, control, register, formState: { errors } } = useForm<SurveyForm>();
   const navigate = useNavigate();
   const [questions, setQuestions] = useState<any[]>([]);
@@ -19,7 +19,7 @@ const SurveyCandidate = () => {
     const fetchQuestions = async () => {
       try {
         setLoading(true);
-        const response = await fetch("http://localhost:4000/api/preguntas/candidate");
+        const response = await fetch("http://localhost:4000/api/preguntas/employee");
         const data = await response.json();
         if (!Array.isArray(data)) throw new Error("Datos inválidos de preguntas");
         setQuestions(data);
@@ -38,7 +38,7 @@ const SurveyCandidate = () => {
     try {
       const payload = {
         idUsuario: userId,
-        rol: "candidate",
+        rol: "employee",
         respuestas: data,
       };
       const response = await fetch("http://localhost:4000/api/respuestas/submit", {
@@ -61,7 +61,7 @@ const SurveyCandidate = () => {
     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', width: '100vw', p: 2 }}>
       <Paper elevation={3} sx={{ p: 4, width: '100%', maxWidth: 600}}>
         <Typography variant="h4" align="center" gutterBottom sx={{ mb: 3 }}>
-          Encuesta para Candidatos - Feedback Talent
+          Encuesta para Empleados - Feedback Talent
         </Typography>
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -120,4 +120,4 @@ const SurveyCandidate = () => {
   );
 };
 
-export default SurveyCandidate;
+export default SurveyEmploye;

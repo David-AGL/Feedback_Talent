@@ -1,4 +1,6 @@
 import express from "express";  // Importa Express para definir rutas
+import candidateQuestion from "../models/candidateQuestions";
+import employeeQuestion from "../models/employeeQuestions";
 
 const router = express.Router();  // Crea un enrutador para las rutas de preguntas
 
