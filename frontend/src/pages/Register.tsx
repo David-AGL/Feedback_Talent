@@ -34,37 +34,48 @@ const Register = () => {  // Componente funcional para la página de registro
   const [loading, setLoading] = useState(false);  // Estado para indicar carga
   const [userType, setUserType] = useState<"person" | "company">("person");  // Estado para el tipo de usuario, por defecto "person"
 
-  const onSubmit = async (data: RegisterForm) => {  // Función asíncrona para manejar el envío
-    setLoading(true);  // Activa el estado de carga
-    setError(null);  // Limpia errores previos
-    try {  // Bloque try-catch para manejar la solicitud
-      const payload = {  
-        numeroIdentificacion: userType === "person" ? (data as PersonRegisterForm).id : (data as CompanyRegisterForm).nit,
-        nombre: userType === "person" ? (data as PersonRegisterForm).name : (data as CompanyRegisterForm).companyName,
-        email: data.email,
-        contrasena: data.password,
-        fechaNacimiento: userType === "person" ? (data as PersonRegisterForm).birthDate : null,
-        rol: userType === "person" ? (data as PersonRegisterForm).userType : "company",
-        descripcion: userType === "company" ? "Empresa registrada" : "Usuario registrado"
+  const onSubmit = async (data: RegisterForm) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const email = data.email.trim().toLowerCase();
+
+      const base = {
+        idNumber: userType === "person"
+          ? (data as PersonRegisterForm).id
+          : (data as CompanyRegisterForm).nit,
+        name: userType === "person"
+          ? (data as PersonRegisterForm).name
+          : (data as CompanyRegisterForm).companyName,
+        email,
+        password: data.password, // el servidor hará el hash -> passwordHash
+        role: userType === "person"
+          ? (data as PersonRegisterForm).userType // "employee" | "candidate"
+          : "company" as const,
+        description: userType === "company" ? "Empresa registrada" : "Usuario registrado",
       };
-      const res = await fetch("http://localhost:4000/api/usuarios/register", {
+
+      // Solo incluir birthDate si es persona
+      const payload =
+        userType === "person"
+          ? { ...base, birthDate: (data as PersonRegisterForm).birthDate }
+          : base;
+
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
       const result = await res.json();
+      if (!res.ok) throw new Error(result.message || "Error en el registro");
 
-      if (!res.ok) {
-        throw new Error(result.message || "Error en el registro");
-      }
-      console.log("✅ Usuario registrado:", result);
-      navigate("/login"); // Redirige al login solo si se guardó bien
+      navigate("/login");
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message ?? "Error en el registro");
     } finally {
       setLoading(false);
-    }    
+    }
   };
 
   return (  // Renderiza el componente
