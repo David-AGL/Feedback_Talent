@@ -1,11 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+  font-family: 'Inter', system-ui, -apple-system, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color: #212529; /* Texto oscuro para modo claro */
+  background-color: #ffffff; /* Fondo blanco por defecto */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -13,56 +16,162 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+/* Variables de colores personalizadas (Magneto-inspired) */
+:root {
+  --primary-color: #0A66C2; /* Azul principal para enlaces y nav */
+  --secondary-color: #0073B1; /* Azul claro para hover */
+  --accent-color: #FF6B00; /* Naranja para botones CTAs */
+  --accent-hover: #E67E22; /* Naranja más oscuro para hover */
+  --text-primary: #212529; /* Negro/gris oscuro para modo claro */
+  --text-secondary: #6C757D; /* Gris medio */
+  --background-light: #F8F9FA; /* Fondo claro */
+  --success: #28A745; /* Verde para confirmaciones */
+  --error: #DC3545; /* Rojo para errores */
 }
 
+/* Modo claro (ya está bien con blanco) */
+@media (prefers-color-scheme: light) {
+  :root {
+    color: var(--text-primary);
+    background-color: var(--background-light); /* Fondo claro opcional */
+  }
+  a:hover {
+    color: var(--secondary-color);
+  }
+  button {
+    background-color: #f9f9f9;
+    border-color: var(--primary-color);
+  }
+  button:hover {
+    border-color: var(--secondary-color);
+  }
+}
+
+/* Modo oscuro */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color: rgba(255, 255, 255, 0.87);
+    background-color: #242424; /* Fondo oscuro opcional, pero no predominará */
+  }
+  a:hover {
+    color: var(--secondary-color);
+  }
+  button {
+    background-color: #1a1a1a;
+    border-color: var(--primary-color);
+  }
+  button:hover {
+    border-color: var(--secondary-color);
+  }
+}
+
+/* Estilos base */
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background-color: #ffffff; /* Fondo blanco forzado */
 }
 
 h1 {
-  font-size: 3.2em;
+  font-size: 2.5rem;
+  font-weight: 700;
   line-height: 1.1;
+  margin-bottom: 0.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+a {
+  font-weight: 500;
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--secondary-color);
 }
 
 button {
-  border-radius: 8px;
+  border-radius: 0.375rem;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: var(--accent-color);
+  color: white;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: background-color 0.2s, border-color 0.25s;
 }
+
 button:hover {
-  border-color: #646cff;
+  background-color: var(--accent-hover);
+  border-color: var(--secondary-color);
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
+/* Estilos para la barra de navegación */
+nav {
+  background-color: var(--primary-color);
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+nav ul {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+nav a {
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+nav a:hover {
+  color: #F8F9FA;
+}
+
+/* Estilos para el contenido principal */
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* Estilos para las preguntas de encuestas */
+.survey-question {
+  background: #ffffff; /* Fondo blanco en modo claro */
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .survey-question {
+    background: rgba(255, 255, 255, 0.1); /* Fondo transparente en modo oscuro */
   }
 }
+
+.required { color: var(--error); }
