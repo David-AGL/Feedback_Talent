@@ -12,7 +12,7 @@
     "declaration": true,
     "strict": true,
     "skipLibCheck": true,
-    "ignoreDeprecations": "6.0" // Esto es temporal
+    "ignoreDeprecations": "5.0"  // Esto es temporal
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
