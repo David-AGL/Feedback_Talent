@@ -110,7 +110,7 @@ const Login = () => {  // Componente funcional para la página de login
             ¿No tienes cuenta? <a href="/register" style={{ color: '#007BFF' }}>Regístrate aquí</a>  
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-            ¿Olvidaste tu contraseña? <a href="/auth/forgot-password" style={{ color: '#007BFF' }}>Recupérala aquí</a>
+            ¿Olvidaste tu contraseña? <a href="/auth/Recover" style={{ color: '#007BFF' }}>Recupérala aquí</a>
           </Typography>
         </Box>
       </Paper>
