@@ -1,15 +1,28 @@
 import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Importamos Bootstrap
-import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap'; // Importamos componentes de react-bootstrap
-import { Link } from "react-router-dom";
-
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from '../contexts/AuthContext'; // Ajusta la ruta según tu estructura de carpetas
 
 const MyNavbar: React.FC = () => {
+  const { isAuthenticated, logout, role } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  console.log('isAuthenticated:', isAuthenticated); // Para debug
+
   return (
-    <Navbar bg="dark" variant="dark" expand="lg">
+    <Navbar bg="dark" variant="dark" expand="lg" style={{
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+      }} >
       <Container>
         {/* Logo o nombre del sitio */}
-        <Navbar.Brand href='home' as={Link} to="/">
+        <Navbar.Brand as={Link} to="/">
           <img
             src="../pagina-principal.png"
             alt="Logo"
@@ -26,13 +39,56 @@ const MyNavbar: React.FC = () => {
         {/* Contenedor del contenido colapsable */}
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="home">Inicio</Nav.Link>
-            <Nav.Link href="profile">Perfil</Nav.Link>
-            <NavDropdown title="Encuestas" id="basic-nav-dropdown">
-              <NavDropdown.Item as={Link} to="/surveycandidate">Candidato</NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/surveyemployee">Empleado</NavDropdown.Item>
-            </NavDropdown>
-            <Nav.Link href="login">Log out</Nav.Link>
+            {/* Opciones visibles solo cuando está autenticado */}
+            {isAuthenticated ? (
+              <>
+                <Nav.Link as={Link} to="/" style={{ fontWeight: 500 }}>Inicio</Nav.Link>
+                <Nav.Link as={Link} to="/profile" style={{ fontWeight: 500 }}>Perfil</Nav.Link>
+
+                {/* Mostrar Encuestas solo para employee y candidate */}
+                {(role === 'employee' || role === 'candidate') && (
+                  <NavDropdown title="Encuestas" id="basic-nav-dropdown">
+                    {role === 'candidate' && (
+                      <NavDropdown.Item as={Link} to="/surveycandidate">
+                        Candidato
+                      </NavDropdown.Item>
+                    )}
+                    {role === 'employee' && (
+                      <NavDropdown.Item as={Link} to="/surveyemployee">
+                        Empleado
+                      </NavDropdown.Item>
+                    )}
+                  </NavDropdown>
+                )}
+
+                {/* Mostrar Dashboard solo para company */}
+                {role === 'company' && (
+                  <Nav.Link as={Link} to="/dashboard" style={{ fontWeight: 500 }}>Dashboard</Nav.Link>
+                )}
+
+                <Nav.Link onClick={handleLogout} style={{ cursor: 'pointer',
+                    fontWeight: 500,
+                    background: 'rgba(255,255,255,0.2)',
+                    borderRadius: '8px',
+                    padding: '8px 16px',
+                    marginLeft: '8px',
+                    transition: 'all 0.3s ease' }}
+                    onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.3)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.2)';
+                  }}>
+                  Log out
+                </Nav.Link>
+              </>
+            ) : (
+              /* Opciones visibles solo cuando NO está autenticado */
+              <>
+                <Nav.Link as={Link} to="/login" style={{ fontWeight: 500 }}>Log in</Nav.Link>
+                <Nav.Link as={Link} to="/register" style={{ fontWeight: 500 }}>Regístrate</Nav.Link>
+              </>
+            )}
           </Nav>
         </Navbar.Collapse>
       </Container>

@@ -1,4 +1,5 @@
 import { Routes, Route, useLocation } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
 import Login from "./pages/Login.tsx";
 import SurveyEmployee from "./pages/SurveyEmployee.tsx";
 import SurveyCandidate from "./pages/SurveyCandidate.tsx";
@@ -16,7 +17,8 @@ const AppContent: React.FC = () => {
 
   // No mostrar Footer en /login y /auth/recover
   const showNavbarAndFooter =
-  location.pathname !== '/login' && location.pathname !== '/auth/recover';
+  location.pathname !== '/login' && location.pathname !== '/auth/recover'&&
+    location.pathname !== '/register';
 
 
   return (
@@ -40,7 +42,10 @@ const AppContent: React.FC = () => {
 };
 
 function App() {
-  return <AppContent />;
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>);
 }
 
 export default App;

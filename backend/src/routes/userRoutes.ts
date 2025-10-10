@@ -1,6 +1,7 @@
 // backend/src/routes/userRoutes.ts
 import express, { Request, Response } from "express";
-import User from "../models/user"; // ojo: minúsculas según tu árbol
+import User from "../models/user"; // ojo: minúsculas según árbol
+import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
@@ -128,9 +129,24 @@ router.post("/login", async (req: Request, res: Response) => {
       return res.status(401).json({ message: "Credenciales inválidas" });
     }
 
+    // ← GENERAR JWT TOKEN
+    const JWT_SECRET = process.env.JWT_SECRET || "fallback_secret_key";
+    
+    const token = jwt.sign(
+      {
+        userId: user._id,
+        email: user.email,
+        role: user.role, // ← IMPORTANTE: incluir el rol
+        name: user.name,
+      },
+      JWT_SECRET,
+      { expiresIn: "7d" } // Token válido por 7 días
+    );
+
     // Al convertir a JSON, tu esquema oculta passwordHash (toJSON ya lo borra)
     const safeUser = user.toJSON();
-    return res.status(200).json({ message: "Login exitoso", user: safeUser });
+    // Devolver token y usuario
+    return res.status(200).json({ message: "Login exitoso", user: safeUser, token });
   } catch (error) {
     console.error("Error en login:", error);
     return res

@@ -3,6 +3,7 @@ import { Button, TextField, Typography, Box, Paper, Alert } from "@mui/material"
 import { useNavigate } from "react-router-dom";  // Hook para navegar entre rutas
 import { login } from "../services/api";  // Importa la función de login del servicio API
 import { useState } from "react";  // Hook para manejar estado local (error y loading)
+import { useAuth } from "../contexts/AuthContext"; // ← IMPORTAR useAuth
 
 interface LoginForm {  // Define la interfaz TypeScript para los campos del formulario
   email: string;  // Campo para el email del usuario
@@ -12,6 +13,7 @@ interface LoginForm {  // Define la interfaz TypeScript para los campos del form
 const Login = () => {  // Componente funcional para la página de login
   const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>();  // Desestructura useForm con tipado
   const navigate = useNavigate();  // Inicializa el hook de navegación
+  const { login: authLogin } = useAuth(); // ← OBTENER login del contexto (renombrado para evitar conflicto)
   const [error, setError] = useState<string | null>(null);  // Estado para manejar errores
   const [loading, setLoading] = useState(false);  // Estado para indicar carga
 
@@ -21,9 +23,38 @@ const Login = () => {  // Componente funcional para la página de login
     try {  // Bloque try-catch para la solicitud al backend
       const response = await login(data.email, data.password);  // Llama a la API
       console.log("Login exitoso", response.data);  // Registra éxito
-      navigate("/surveyCandidate");  // Redirige (ajustable por rol)
+      // Ahora sí viene el token
+
+      const token = response.data.token; // Obtener el token de la respuesta
+      
+      if (token) {
+        authLogin(token); // ← LLAMAR al login del contexto para guardar el token
+
+        // Decodificar el token para obtener el rol
+        const decoded = JSON.parse(atob(token.split('.')[1]));
+        const role = decoded.role;
+
+        console.log("Token decodificado:", decoded);
+        console.log("Rol:", role);
+
+        // Redirigir según el rol
+        switch(role) {
+          case 'candidate':
+            navigate("/surveycandidate");
+            break;
+          case 'employee':
+            navigate("/surveyemployee");
+            break;
+          case 'company':
+            navigate("/dashboard");
+            break;
+          default:
+            navigate("/home"); // Ruta por defecto si el rol no coincide
+        }
+      }
     } catch (err: any) {  // Captura errores
       setError(err.response?.data?.message || "Error al iniciar sesión");
+      console.error("Error en login:", err);
     } finally {  // Siempre al final
       setLoading(false);  // Desactiva carga
     }
@@ -35,8 +66,8 @@ const Login = () => {  // Componente funcional para la página de login
         display: 'flex',  // Usa flexbox para centrar
         justifyContent: 'center',  // Centra horizontalmente
         alignItems: 'center',  // Centra verticalmente
-        minHeight: '100vh',  // Altura mínima igual al viewport
-        width: '100vw',  // Ancho completo de la ventana
+        height: '100vh',  // Altura mínima igual al viewport
+        width: 'auto',  // Ancho completo de la ventana
         backgroundColor: 'background.default',  // Fondo claro del tema
         p: 2  // Padding de 16px en todos los lados
       }}
@@ -62,7 +93,7 @@ const Login = () => {  // Componente funcional para la página de login
         </Typography>
         {error && (  // Muestra alerta si hay error
           <Alert severity="error" sx={{ mb: 2 }}> 
-            {error}  // Mensaje de error
+            {error}  
           </Alert>
         )}
         <form  // Formulario con manejo de envío
