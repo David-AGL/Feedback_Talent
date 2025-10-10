@@ -9,6 +9,8 @@ import {
   CircularProgress,
 } from "@mui/material";
 
+const API = import.meta.env.VITE_API_URL as string; // ej: "http://localhost:4000"
+
 // --- Tipos de estado del wizard
  type Step = "email" | "pin" | "reset" | "done";
 
@@ -86,30 +88,61 @@ export default function RecoverPassword() {
   const passwordOk = useMemo(() => newPassword.length >= 8 && newPassword === confirmPassword, [newPassword, confirmPassword]);
 
   // --- API helpers
-  async function postJSON<T>(url: string, body: any): Promise<T> {
-    const res = await fetch(url, {
+  async function postJSON<T = any>(
+    url: string,            // puede ser "/auth/forgot-password" o una URL absoluta
+    body?: unknown,
+    init?: RequestInit
+  ): Promise<T> {
+    // Si te pasan un path, préfix con API; si ya viene absoluta, úsala tal cual.
+    const isAbsolute = /^https?:\/\//i.test(url);
+    const fullUrl = isAbsolute ? url : `${API}${url}`;
+
+    const res = await fetch(fullUrl, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      headers: { "Content-Type": "application/json", ...(init?.headers || {}) },
+      body: JSON.stringify(body ?? {}),
       credentials: "include",
+      ...init,
     });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      throw new Error(data?.error || data?.message || `Request failed: ${res.status}`);
+
+    // intenta parsear JSON; si falla, cae a texto
+    let data: any = null;
+    try {
+      data = await res.json();
+    } catch {
+      try {
+        data = await res.text();
+      } catch {}
     }
-    return data as T;
+
+    if (!res.ok) {
+      const detail =
+        (data && (data.error || data.message)) ||
+        `Request failed: ${res.status}`;
+      throw new Error(detail);
+    }
+
+    return (data ?? {}) as T;
   }
 
-  // Paso 1: enviar email
+    // Paso 1: enviar email
   async function handleSendEmail(e: React.FormEvent) {
     e.preventDefault();
     if (!canSubmitEmail) return;
     setLoading(true);
     setError(null);
     setInfo(null);
+
     try {
-      const data = await postJSON<{ message?: string; requestId?: string }>("/auth/forgot-password", { email: email.trim().toLowerCase() });
+      const normalizedEmail = email.trim().toLowerCase();
+
+      const data = await postJSON<{ message?: string; requestId?: string }>(
+        "/auth/forgot-password",
+        { email: normalizedEmail }
+      );
+
       if (data?.requestId) setRequestId(data.requestId);
+
       setInfo("Si el correo existe, te enviamos un PIN. Revisa tu bandeja de entrada y spam.");
       setStep("pin");
       setCooldown(DEFAULT_COOLDOWN);
@@ -127,8 +160,16 @@ export default function RecoverPassword() {
     setLoading(true);
     setError(null);
     setInfo(null);
+
     try {
-      const data = await postJSON<{ resetToken: string }>("/auth/verify-pin", { requestId: requestId.trim(), pin: pin.trim() });
+      const normalizedRequestId = requestId.trim();
+      const cleanedPin = pin.replace(/\s+/g, "").trim(); // quita espacios internos
+
+      const data = await postJSON<{ resetToken: string }>(
+        "/auth/verify-pin",
+        { requestId: normalizedRequestId, pin: cleanedPin }
+      );
+
       setResetToken(data.resetToken);
       setStep("reset");
     } catch (err: any) {
@@ -143,9 +184,16 @@ export default function RecoverPassword() {
     setLoading(true);
     setError(null);
     setInfo(null);
+
     try {
-      await postJSON<{ message: string }>("/auth/resend-pin", { requestId: requestId.trim() });
-      setInfo("Te enviamos un nuevo PIN. ");
+      const normalizedRequestId = requestId.trim();
+
+      await postJSON<{ message: string }>(
+        "/auth/resend-pin",
+        { requestId: normalizedRequestId }
+      );
+
+      setInfo("Te enviamos un nuevo PIN.");
       setCooldown(DEFAULT_COOLDOWN);
     } catch (err: any) {
       setError(err.message || "No se pudo reenviar. Intenta más tarde.");
@@ -161,12 +209,19 @@ export default function RecoverPassword() {
     setLoading(true);
     setError(null);
     setInfo(null);
+
     try {
-      await postJSON("/auth/reset-password", { resetToken, newPassword });
+      // No hagas trim del password: podría ser parte válida
+      await postJSON(
+        "/auth/reset-password",
+        { resetToken, newPassword }
+      );
+
       // limpiar sessionStorage
       sessionStorage.removeItem(SS_KEYS.step);
       sessionStorage.removeItem(SS_KEYS.email);
       sessionStorage.removeItem(SS_KEYS.requestId);
+
       setStep("done");
     } catch (err: any) {
       setError(err.message || "El token expiró o no es válido.");

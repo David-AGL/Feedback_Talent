@@ -1,29 +1,30 @@
 // src/models/PasswordReset.ts
 import mongoose, { Schema, model, Document, Model } from "mongoose";
-import argon2 from "argon2";
 import { v4 as uuidv4 } from "uuid";
 
 export type ResetStatus = "pending" | "verified" | "used" | "expired";
 
 export interface IPasswordReset extends Document {
   userId: mongoose.Types.ObjectId;
-  requestId: string;          // identificador público enviado al cliente
-  pinHash: string;            // hash del PIN (nunca guardar el PIN en claro)
-  expiresAt: Date;            // fecha de expiración (usada por el TTL)
-  attemptsLeft: number;       // intentos restantes
-  status: ResetStatus;        // estado de la solicitud
-  verifiedAt?: Date;          // cuándo se verificó el PIN
-  usedAt?: Date;              // cuándo se usó para cambiar la contraseña
-  lastAttemptAt?: Date;       // fecha/hora del último intento
+  requestId: string;                // identificador público enviado al cliente
+  pinHash: string;                  // hash del PIN (nunca guardar el PIN en claro)
+  expiresAt: Date;                  // fecha límite del PIN
+  attemptsLeft: number;             // intentos restantes para el PIN
+  status: ResetStatus;              // estado de la solicitud
+  verifiedAt?: Date;                // cuándo se verificó el PIN
+  usedAt?: Date;                    // cuándo se usó para cambiar la contraseña
+  resetToken?: string;              // token posterior a verificar el PIN
+  resetTokenExpiresAt?: Date;       // vencimiento del resetToken
 
-  // Ayudantes derivados
+  // Métodos de instancia
   isExpired(): boolean;
-  canAttempt(): boolean;
-
-  // Acciones
-  verifyPin(pin: string): Promise<boolean>;
+  decrementAttempts(): Promise<void>;
+  resetPin(newPinHash: string, ttlMin: number, attempts: number): Promise<void>;
+  markVerified(resetToken: string, ttlMin: number): Promise<void>;
   markUsed(): Promise<void>;
 }
+
+const DEFAULT_MAX_ATTEMPTS = Number(process.env.RESET_MAX_ATTEMPTS || 5);
 
 const PasswordResetSchema = new Schema<IPasswordReset>(
   {
@@ -35,25 +36,24 @@ const PasswordResetSchema = new Schema<IPasswordReset>(
     },
     requestId: {
       type: String,
-      required: true,
+      default: uuidv4,
       unique: true,
-      default: uuidv4, // generamos un UUID único por solicitud
       index: true,
+      required: true,
     },
     pinHash: {
       type: String,
       required: true,
-      select: false, // no devolver por defecto en consultas
     },
     expiresAt: {
       type: Date,
       required: true,
-      // el índice TTL se configura abajo; aquí solo almacenamos la fecha
+      // El TTL real se configura con el índice al final del archivo
     },
     attemptsLeft: {
       type: Number,
       required: true,
-      default: 5,  // número de intentos permitidos
+      default: DEFAULT_MAX_ATTEMPTS,
       min: 0,
     },
     status: {
@@ -65,124 +65,46 @@ const PasswordResetSchema = new Schema<IPasswordReset>(
     },
     verifiedAt: { type: Date },
     usedAt: { type: Date },
-    lastAttemptAt: { type: Date },
+    resetToken: { type: String, index: true },
+    resetTokenExpiresAt: { type: Date },
   },
-  {
-    timestamps: true,
-    versionKey: false,
-    collection: "password_resets",
-  }
+  { timestamps: true }
 );
 
-/**
- * Índice TTL: elimina automáticamente el documento cuando `expiresAt` haya pasado.
- * Nota: el TTL es independiente del `status`; MongoDB lo purgará tras la fecha.
- */
-PasswordResetSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
-
-/**
- * Índice compuesto útil para listar/buscar por usuario y estado.
- */
-PasswordResetSchema.index({ userId: 1, status: 1, createdAt: -1 });
-
-/**
- * Valores por defecto y guardas básicas antes de validar.
- */
-PasswordResetSchema.pre("validate", function (next) {
-  const self = this as IPasswordReset & { isNew: boolean };
-
-  // Si no se fijó expiresAt, por defecto ahora + 10 minutos
-  if (!self.expiresAt) {
-    self.expiresAt = new Date(Date.now() + 10 * 60 * 1000);
-  }
-
-  // Evitar guardar expiraciones en el pasado por error
-  if (self.expiresAt.getTime() <= Date.now()) {
-    return next(new Error("expiresAt debe ser una fecha futura"));
-  }
-
-  // Si ya no hay intentos y el estado está en pending, marcar como expirado
-  if (self.attemptsLeft <= 0 && self.status === "pending") {
-    self.status = "expired";
-  }
-
-  next();
-});
-
-/**
- * Helper: indica si la solicitud está expirada por tiempo o estado.
- */
+// --- Métodos de instancia ---
 PasswordResetSchema.methods.isExpired = function (): boolean {
-  return this.expiresAt.getTime() <= Date.now() || this.status === "expired";
+  return !!this.expiresAt && this.expiresAt.getTime() <= Date.now();
 };
 
-/**
- * Helper: verifica si se puede intentar un PIN (estado, tiempo e intentos).
- */
-PasswordResetSchema.methods.canAttempt = function (): boolean {
-  return (
-    this.status === "pending" &&
-    !this.isExpired() &&
-    typeof this.attemptsLeft === "number" &&
-    this.attemptsLeft > 0
-  );
-};
-
-/**
- * Verificar un PIN:
- * - Devuelve true si es correcto: pone status=verified y fija verifiedAt.
- * - Devuelve false si es incorrecto: decrementa attemptsLeft y expira si corresponde.
- * - Si no se puede intentar (expirado o sin intentos), marca expirado en pending.
- */
-PasswordResetSchema.methods.verifyPin = async function (
-  pin: string
-): Promise<boolean> {
-  // Asegurar que `pinHash` está cargado (select: false por defecto)
-  if (typeof this.pinHash !== "string") {
-    // Si no está presente, recargar el documento incluyendo el hash
-    const fresh = await (this.constructor as Model<IPasswordReset>)
-      .findById(this._id)
-      .select("+pinHash");
-    if (!fresh) return false;
-    // Delegar la verificación al documento recargado
-    return fresh.verifyPin(pin);
-  }
-
-  // ¿No se puede intentar?
-  if (!this.canAttempt()) {
-    if (this.status === "pending") {
-      this.status = "expired";
-    }
-    await this.save();
-    return false;
-  }
-
-  const ok = await argon2.verify(this.pinHash, pin);
-  this.lastAttemptAt = new Date();
-
-  if (ok) {
-    this.status = "verified";
-    this.verifiedAt = new Date();
-    await this.save();
-    return true;
-  }
-
-  // PIN incorrecto: restar un intento
-  this.attemptsLeft = Math.max(0, (this.attemptsLeft || 0) - 1);
-
-  // Si se agotaron los intentos o ya expiró por tiempo, marcar como expirado
-  if (this.attemptsLeft <= 0 || this.isExpired()) {
-    this.status = "expired";
-  }
-
+PasswordResetSchema.methods.decrementAttempts = async function (): Promise<void> {
+  const left = typeof this.attemptsLeft === "number" ? this.attemptsLeft : DEFAULT_MAX_ATTEMPTS;
+  this.attemptsLeft = Math.max(0, left - 1);
   await this.save();
-  return false;
 };
 
-/**
- * Marcar como usado después de un cambio de contraseña exitoso.
- * Solo válido si está `verified` y no expirado.
- */
+PasswordResetSchema.methods.resetPin = async function (
+  newPinHash: string,
+  ttlMin: number,
+  attempts: number
+): Promise<void> {
+  this.pinHash = newPinHash;
+  this.expiresAt = new Date(Date.now() + Math.max(1, ttlMin) * 60 * 1000);
+  this.attemptsLeft = Math.max(1, attempts);
+  this.status = "pending";
+  await this.save();
+};
+
+PasswordResetSchema.methods.markVerified = async function (
+  resetToken: string,
+  ttlMin: number
+): Promise<void> {
+  this.status = "verified";
+  this.verifiedAt = new Date();
+  this.resetToken = resetToken;
+  this.resetTokenExpiresAt = new Date(Date.now() + Math.max(1, ttlMin) * 60 * 1000);
+  await this.save();
+};
+
 PasswordResetSchema.methods.markUsed = async function (): Promise<void> {
   if (this.status !== "verified" || this.isExpired()) {
     throw new Error("La solicitud de restablecimiento no está en un estado utilizable");
@@ -191,6 +113,10 @@ PasswordResetSchema.methods.markUsed = async function (): Promise<void> {
   this.usedAt = new Date();
   await this.save();
 };
+
+// Índices útiles
+PasswordResetSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 }); // TTL: cuando llegue la fecha, Mongo eliminará el doc
+PasswordResetSchema.index({ userId: 1, status: 1 });
 
 const PasswordReset: Model<IPasswordReset> =
   (mongoose.models.PasswordReset as Model<IPasswordReset>) ||
