@@ -1,16 +1,12 @@
 import { Router } from "express";
+import { createFeedback, updateFeedback, getFeedbackById, getFeedbackByUserId, getAllFeedback } from "../controller/feedback.controller";
 
 const feedbackRoutes = Router();
 
 // Ejemplo: Ruta para obtener feedback
-feedbackRoutes.get("/", (req, res) => {
-  res.json({ message: "Lista de feedback" });
-});
+feedbackRoutes.get("/", getAllFeedback);
 
 // Ejemplo: Ruta para crear feedback (puedes expandir según necesites)
-feedbackRoutes.post("/", (req, res) => {
-  const { text } = req.body;
-  res.json({ message: "Feedback creado", text });
-});
+feedbackRoutes.post("/", createFeedback);
 
 export default feedbackRoutes;

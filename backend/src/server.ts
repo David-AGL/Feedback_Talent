@@ -2,7 +2,7 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-
+import feedbackRoutes from "./routes/feedbackRoutes";
 import { connectDB } from "./config/db";
 import app from "./app"; 
 import userRoutes from "./routes/userRoutes";
@@ -34,8 +34,7 @@ app.get("/", (req, res) => {
 app.get("/", (_req, res) => res.send("API funcionando"));
 app.use("/api/usuarios", userRoutes);
 app.use("/api/preguntas", questionsRoutes);
-
-
+app.use("/api/feedback", feedbackRoutes);
 app.use("/auth", passwordResetRouter);
 
 
