@@ -47,18 +47,21 @@ const MyNavbar: React.FC = () => {
 
                 {/* Mostrar Encuestas solo para employee y candidate */}
                 {(role === 'employee' || role === 'candidate') && (
-                  <NavDropdown title="Encuestas" id="basic-nav-dropdown">
-                    {role === 'candidate' && (
-                      <NavDropdown.Item as={Link} to="/surveycandidate">
-                        Candidato
-                      </NavDropdown.Item>
-                    )}
-                    {role === 'employee' && (
-                      <NavDropdown.Item as={Link} to="/surveyemployee">
-                        Empleado
-                      </NavDropdown.Item>
-                    )}
-                  </NavDropdown>
+                  <>
+                    <NavDropdown title="Encuestas" id="basic-nav-dropdown">
+                      {role === 'candidate' && (
+                        <NavDropdown.Item as={Link} to="/surveycandidate">
+                          Candidato
+                        </NavDropdown.Item>
+                      )}
+                      {role === 'employee' && (
+                        <NavDropdown.Item as={Link} to="/surveyemployee">
+                          Empleado
+                        </NavDropdown.Item>
+                      )}
+                    </NavDropdown>
+                    <Nav.Link as={Link} to="/feedback-history" style={{ fontWeight: 500 }}>Historial</Nav.Link>
+                  </>
                 )}
 
                 {/* Mostrar Dashboard solo para company */}

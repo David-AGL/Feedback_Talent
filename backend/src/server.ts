@@ -8,6 +8,7 @@ import app from "./app";
 import userRoutes from "./routes/userRoutes";
 import questionsRoutes from "./routes/questionsRoutes";
 import passwordResetRouter from "./routes/passwordReset"; 
+import feedbackHistoryRoutes from './routes/feedbackHistoryRoutes';
 
 const PORT = Number(process.env.PORT || 4000);
 const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "http://localhost:5173";
@@ -34,6 +35,7 @@ app.get("/", (req, res) => {
 app.get("/", (_req, res) => res.send("API funcionando"));
 app.use("/api/usuarios", userRoutes);
 app.use("/api/preguntas", questionsRoutes);
+app.use('/api/feedback-history', feedbackHistoryRoutes);
 
 
 app.use("/auth", passwordResetRouter);

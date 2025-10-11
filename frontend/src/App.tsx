@@ -8,6 +8,7 @@ import Register from "./pages/Register.tsx";
 import Home from "./pages/Home.tsx"; 
 import RecoverPassword from "./pages/RecoverPassword.tsx";
 import Profile from "./pages/Profile.tsx";
+import FeedbackHistory from './pages/FeedbackHistory';
 import Navbar from "./components/navbar.tsx";
 import Footer from "./components/footer.tsx";
 
@@ -36,6 +37,7 @@ const AppContent: React.FC = () => {
           <Route path="/surveycandidate" element={<SurveyCandidate />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/feedback-history" element={<FeedbackHistory />} />
         </Routes>
       </main>
       {showNavbarAndFooter && <Footer />} {/* Renderiza Footer solo si no estamos en /login */}

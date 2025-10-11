@@ -3,7 +3,7 @@ import { Button, TextField, Typography, Box, Paper, Rating, Slider, Alert, Conta
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
-import CompanySearchBar from "../components/companySearchBar"; // ← IMPORTAR
+import CompanySearchBar from "../components/companySearchBar";
 
 interface SurveyForm {
   [key: string]: number | string;
@@ -26,7 +26,8 @@ const SurveyEmployee = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null); // ← AGREGAR ESTADO
+  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
+  const [evaluatedCompanies, setEvaluatedCompanies] = useState<string[]>([]);
 
   const roleLabels: { [key: string]: string } = {
     employee: "Empleado",
@@ -49,7 +50,23 @@ const SurveyEmployee = () => {
       }
     };
     fetchQuestions();
+    fetchEvaluatedCompanies();
   }, []);
+
+  const fetchEvaluatedCompanies = async () => {
+    try {
+      const response = await fetch("http://localhost:4000/api/feedback-history/my-feedbacks", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await response.json();
+      if (data.success) {
+        const companyIds = data.data.map((item: any) => item.companyUserId);
+        setEvaluatedCompanies([...new Set<string>(companyIds)]);
+      }
+    } catch (err) {
+      console.error("Error fetching evaluated companies:", err);
+    }
+  };
 
   useEffect(() => {
     const formValues = control._formValues || {};
@@ -137,6 +154,7 @@ const SurveyEmployee = () => {
             <CompanySearchBar
               onCompanySelect={setSelectedCompany}
               selectedCompany={selectedCompany}
+              evaluatedCompanies={evaluatedCompanies}
             />
             {selectedCompany && (
               <Alert severity="success" sx={{ mt: 2, borderRadius: 2 }}>

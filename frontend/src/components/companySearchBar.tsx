@@ -21,11 +21,13 @@ interface Company {
 interface CompanySearchBarProps {
   onCompanySelect: (company: Company | null) => void;
   selectedCompany: Company | null;
+  evaluatedCompanies: string[];
 }
 
-const CompanySearchBar: React.FC<CompanySearchBarProps> = ({ 
-  onCompanySelect, 
-  selectedCompany 
+const CompanySearchBar: React.FC<CompanySearchBarProps> = ({
+  onCompanySelect,
+  selectedCompany,
+  evaluatedCompanies,
 }) => {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState<Company[]>([]);
@@ -76,6 +78,7 @@ const CompanySearchBar: React.FC<CompanySearchBarProps> = ({
       loading={loading}
       getOptionLabel={(option) => option.name}
       isOptionEqualToValue={(option, value) => option._id === value._id}
+      getOptionDisabled={(option) => evaluatedCompanies.includes(option._id)}
       renderInput={(params) => (
         <TextField
           {...params}
@@ -93,7 +96,18 @@ const CompanySearchBar: React.FC<CompanySearchBarProps> = ({
         />
       )}
       renderOption={(props, option) => (
-        <Box component="li" {...props} sx={{ display: 'flex', gap: 2, alignItems: 'center', py: 1.5 }}>
+        <Box
+          component="li"
+          {...props}
+          sx={{
+            display: 'flex',
+            gap: 2,
+            alignItems: 'center',
+            py: 1.5,
+            opacity: evaluatedCompanies.includes(option._id) ? 0.5 : 1,
+            cursor: evaluatedCompanies.includes(option._id) ? 'not-allowed' : 'pointer',
+          }}
+        >
           <Avatar
             sx={{
               width: 50,

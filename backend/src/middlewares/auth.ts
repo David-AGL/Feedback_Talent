@@ -13,7 +13,7 @@ declare module "express" {
   }
 }
 
-const SECRET_KEY = process.env.JWT_SECRET_KEY || "tu-clave-secreta-por-defecto-123456"; // Clave desde .env con valor por defecto
+const SECRET_KEY = process.env.JWT_SECRET || "fallback_secret_key"; // Clave desde .env con valor por defecto
 
 // Middleware para autenticar el token
 export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
@@ -32,7 +32,7 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
     }
 
     // Almacena el usuario decodificado (id y role) en req.user
-    req.user = { id: decoded.id, role: decoded.role };
+    req.user = { id: decoded.userId, role: decoded.role };
     next(); // Pasa al siguiente middleware o ruta
   });
 };

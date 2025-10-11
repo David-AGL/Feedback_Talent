@@ -14,7 +14,7 @@
     "jsx": "react-jsx",
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "ignoreDeprecations": "6.0",
+    "ignoreDeprecations": "5.0",
     "baseUrl": ".",  // Opcional, pero útil
     "paths": {
       "@pages/*": ["src/pages/*"], // Mapea @pages/Home a src/pages/Home
