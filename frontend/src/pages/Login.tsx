@@ -49,7 +49,7 @@ const Login = () => {  // Componente funcional para la página de login
             navigate("/dashboard");
             break;
           default:
-            navigate("/home"); // Ruta por defecto si el rol no coincide
+            navigate("/"); // Ruta por defecto si el rol no coincide
         }
       }
     } catch (err: any) {  // Captura errores

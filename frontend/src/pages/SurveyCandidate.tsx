@@ -17,7 +17,7 @@ import { useAuth } from "../contexts/AuthContext";
 
 // Componente de barra de búsqueda de empresas
 import CompanySearchBar from "../components/companySearchBar";
-const [evaluatedCompanies, setEvaluatedCompanies] = useState<string[]>([]);
+
 
 
 // ==========================================
@@ -80,6 +80,7 @@ const SurveyCandidate = () => {
   // Estado para almacenar la empresa seleccionada por el usuario
   // Inicialmente es null hasta que el usuario seleccione una empresa
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
+  const [evaluatedCompanies, setEvaluatedCompanies] = useState<string[]>([]);
 
   // Objeto para traducir los roles del inglés al español
   const roleLabels: { [key: string]: string } = {
