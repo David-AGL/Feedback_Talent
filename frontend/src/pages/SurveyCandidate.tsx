@@ -17,6 +17,8 @@ import { useAuth } from "../contexts/AuthContext";
 
 // Componente de barra de búsqueda de empresas
 import CompanySearchBar from "../components/companySearchBar";
+const [evaluatedCompanies, setEvaluatedCompanies] = useState<string[]>([]);
+
 
 // ==========================================
 // INTERFACES Y TIPOS
@@ -258,6 +260,7 @@ const SurveyCandidate = () => {
             <CompanySearchBar
               onCompanySelect={setSelectedCompany} // Callback cuando se selecciona una empresa
               selectedCompany={selectedCompany}    // Empresa actualmente seleccionada
+              evaluatedCompanies={evaluatedCompanies}
             />
             
             {/* Alerta de éxito que se muestra solo si hay empresa seleccionada */}
