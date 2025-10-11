@@ -155,4 +155,54 @@ router.post("/login", async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * GET /companies/search?q=nombre
+ * Buscar usuarios con rol "company"
+ */
+router.get("/companies/search", async (req: Request, res: Response) => {
+  try {
+    const query = req.query.q as string;
+    
+    if (!query || query.trim().length < 2) {
+      return res.status(400).json({ 
+        message: "La búsqueda debe tener al menos 2 caracteres" 
+      });
+    }
+
+    const companies = await User.find({
+      role: "company",
+      name: { $regex: query, $options: "i" },
+    })
+      .select("_id name email description idNumber")
+      .limit(10)
+      .sort({ name: 1 });
+
+    return res.status(200).json(companies);
+  } catch (error) {
+    console.error("Error buscando empresas:", error);
+    return res.status(500).json({ 
+      message: "Error al buscar empresas" 
+    });
+  }
+});
+
+/**
+ * GET /companies
+ * Obtener todos los usuarios con rol "company"
+ */
+router.get("/companies", async (req: Request, res: Response) => {
+  try {
+    const companies = await User.find({ role: "company" })
+      .select("_id name email description idNumber")
+      .sort({ name: 1 });
+
+    return res.status(200).json(companies);
+  } catch (error) {
+    console.error("Error obteniendo empresas:", error);
+    return res.status(500).json({ 
+      message: "Error al obtener empresas" 
+    });
+  }
+});
+
 export default router;

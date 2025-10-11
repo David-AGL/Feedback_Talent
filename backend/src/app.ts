@@ -3,6 +3,7 @@ import cors from "cors";
 import userRoutes from "./routes/userRoutes";
 import questionsRoutes from "./routes/questionsRoutes"; // Importa las rutas de preguntas
 import passwordResetRouter from "./routes/passwordReset";
+import responseRoutes from "./routes/responseRoutes";
 
 const app = express();
 
@@ -18,5 +19,6 @@ app.use(express.json());
 app.use("/api/auth", userRoutes); 
 app.use("/api/preguntas", questionsRoutes); // Monta las rutas de preguntas
 app.use("/api/auth", passwordResetRouter); // Rutas de reseteo de contraseña
+app.use("/api/responses", responseRoutes);
 
 export default app;
