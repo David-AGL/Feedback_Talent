@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import CompanySearchBar from "../components/companySearchBar";
+import Swal from "sweetalert2";
 
 interface SurveyForm {
   [key: string]: number | string;
@@ -101,7 +102,24 @@ const SurveyEmployee = () => {
       const result = await response.json();
       if (!response.ok) throw new Error(result.message || "Error al enviar");
       console.log("Respuestas enviadas", result);
-      navigate("/");
+
+      // Mostrar popup de confirmación de envío de feedback
+      Swal.fire({
+        icon: "success",
+        title: "¡Feedback enviado!",
+        text: "Tu opinión fue registrada exitosamente 😊",
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        background: '#ffffff',
+        color: '#667eea', // tono morado coherente con el diseño del empleado
+      });
+
+// Espera a que se cierre el popup y redirige al home
+setTimeout(() => {
+  navigate("/");
+}, 2000);
+
     } catch (err: any) {
       setError(err.message || "Error al enviar encuesta");
       window.scrollTo({ top: 0, behavior: 'smooth' });

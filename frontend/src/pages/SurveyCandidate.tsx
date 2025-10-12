@@ -18,6 +18,9 @@ import { useAuth } from "../contexts/AuthContext";
 // Componente de barra de búsqueda de empresas
 import CompanySearchBar from "../components/companySearchBar";
 
+//Para hacer la confirmación de envío de feedback
+import Swal from "sweetalert2";
+
 
 
 // ==========================================
@@ -186,8 +189,26 @@ const SurveyCandidate = () => {
       console.log("Respuestas enviadas", result);
       
       // Redirige al usuario a la página de inicio
-      navigate("/");
-      
+      // Log de éxito en la consola
+      console.log("Respuestas enviadas", result);
+
+      // Mostrar popup de confirmación
+      Swal.fire({
+        icon: "success",
+        title: "¡Feedback enviado!",
+        text: "Tu opinión fue registrada exitosamente 😊",
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        background: '#ffffff',
+        color: '#0A66C2',
+      });
+
+      // Espera un momento antes de redirigir
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
+            
     } catch (err: any) {
       // Captura errores y los muestra al usuario
       setError(err.message || "Error al enviar encuesta");
