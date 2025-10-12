@@ -1,77 +1,184 @@
-// contexts/AuthContext.tsx
-import React, { createContext, useContext, useState, useEffect } from 'react'; // Importa React y sus hooks necesarios
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
-// Define la interfaz para el contexto de autenticación, especificando las propiedades y métodos disponibles
+// ==========================================
+// INTERFACES
+// ==========================================
+
+/**
+ * Define la estructura del contexto de autenticación
+ * Proporciona información y métodos relacionados con la sesión del usuario
+ */
 interface AuthContextType {
-  isAuthenticated: boolean; // Indica si el usuario está autenticado
+  isAuthenticated: boolean;     // Indica si el usuario está autenticado
   login: (token: string) => void; // Función para iniciar sesión con un token
-  logout: () => void; // Función para cerrar sesión
-  role: string | null; // Rol del usuario (e.g., "candidate", "employee", "company") o null si no está definido
-  token: string | null; // Token JWT del usuario o null si no está autenticado
+  logout: () => void;            // Función para cerrar sesión
+  role: string | null;           // Rol del usuario (employee, candidate, company)
+  token: string | null;          // Token JWT del usuario
 }
 
-// Crea el contexto de autenticación con un valor inicial undefined
+// ==========================================
+// CREACIÓN DEL CONTEXTO
+// ==========================================
+
+/**
+ * Crea el contexto de autenticación con valor inicial undefined
+ * Se usa undefined para detectar si el contexto se usa fuera del Provider
+ */
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Componente proveedor del contexto que envuelve la aplicación
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Estado inicial para indicar si el usuario está autenticado
-  const [role, setRole] = useState<string | null>(null); // Estado inicial para el rol del usuario
-  const [token, setToken] = useState<string | null>(null); // Estado inicial para el token JWT
+// ==========================================
+// PROVIDER DEL CONTEXTO
+// ==========================================
 
-  // Efecto que se ejecuta al montar el componente para cargar el token almacenado
+/**
+ * Componente proveedor que envuelve la aplicación
+ * Proporciona el estado de autenticación a todos los componentes hijos
+ */
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Estados
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [role, setRole] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true); // ← AGREGAR estado de loading
+
+  // ==========================================
+  // EFECTO: RESTAURAR SESIÓN AL MONTAR
+  // ==========================================
+  
+  /**
+   * Se ejecuta UNA SOLA VEZ al montar el componente
+   * Verifica si hay un token guardado en localStorage
+   * Si existe, lo valida y restaura la sesión
+   */
   useEffect(() => {
-    const storedToken = localStorage.getItem('token'); // Obtiene el token almacenado en localStorage
-    if (storedToken) { // Si existe un token almacenado
+    const storedToken = localStorage.getItem('token');
+    
+    if (storedToken) {
       try {
-        const decoded = JSON.parse(atob(storedToken.split('.')[1])); // Decodifica el payload del token JWT (parte intermedia)
-        setIsAuthenticated(true); // Marca al usuario como autenticado
-        setRole(decoded.role); // Establece el rol decodificado
-        setToken(storedToken); // Guarda el token en el estado
-      } catch (error) { // Captura errores al decodificar el token
-        console.error('Token inválido, limpiando:', error); // Registra el error
-        localStorage.removeItem('token'); // Elimina el token inválido de localStorage
+        // Intenta decodificar el token
+        const decoded = JSON.parse(atob(storedToken.split('.')[1]));
+        
+        // Verifica si el token ha expirado
+        const currentTime = Date.now() / 1000; // Tiempo actual en segundos
+        if (decoded.exp && decoded.exp < currentTime) {
+          // Token expirado, limpia localStorage
+          console.log('Token expirado, limpiando sesión');
+          localStorage.removeItem('token');
+          setLoading(false);
+          return;
+        }
+        
+        // Token válido, restaura la sesión
+        setIsAuthenticated(true);
+        setRole(decoded.role);
+        setToken(storedToken);
+        console.log('Sesión restaurada:', decoded.role);
+      } catch (error) {
+        // Token inválido, limpia localStorage
+        console.error('Token inválido, limpiando:', error);
+        localStorage.removeItem('token');
       }
     }
-  }, []); // El array vacío asegura que este efecto solo se ejecute al montar
+    
+    setLoading(false); // Termina la carga inicial
+  }, []); // Array vacío = solo se ejecuta al montar
 
-  // Función para iniciar sesión, recibiendo un nuevo token
+  // ==========================================
+  // FUNCIÓN: INICIAR SESIÓN
+  // ==========================================
+  
+  /**
+   * Guarda el token y actualiza el estado de autenticación
+   * @param newToken - Token JWT recibido del backend
+   */
   const login = (newToken: string) => {
-    localStorage.setItem('token', newToken); // Almacena el token en localStorage
+    localStorage.setItem('token', newToken); // Persiste en localStorage
+    
     try {
-      const decoded = JSON.parse(atob(newToken.split('.')[1])); // Decodifica el payload del nuevo token
-      setIsAuthenticated(true); // Marca al usuario como autenticado
-      setRole(decoded.role); // Establece el rol decodificado
-      setToken(newToken); // Actualiza el token en el estado
-    } catch (error) { // Captura errores al decodificar
-      console.error('Error decodificando token:', error); // Registra el error
-      setIsAuthenticated(false); // Marca como no autenticado en caso de error
-      setRole(null); // Limpia el rol
-      setToken(null); // Limpia el token
+      const decoded = JSON.parse(atob(newToken.split('.')[1]));
+      setIsAuthenticated(true);
+      setRole(decoded.role);
+      setToken(newToken);
+      console.log('Login exitoso:', decoded.role);
+    } catch (error) {
+      console.error('Error decodificando token:', error);
+      setIsAuthenticated(false);
+      setRole(null);
+      setToken(null);
     }
   };
 
-  // Función para cerrar sesión
+  // ==========================================
+  // FUNCIÓN: CERRAR SESIÓN
+  // ==========================================
+  
+  /**
+   * Limpia el token y resetea el estado de autenticación
+   */
   const logout = () => {
-    localStorage.removeItem('token'); // Elimina el token de localStorage
-    setIsAuthenticated(false); // Marca al usuario como no autenticado
-    setRole(null); // Limpia el rol
-    setToken(null); // Limpia el token
+    localStorage.removeItem('token');
+    setIsAuthenticated(false);
+    setRole(null);
+    setToken(null);
+    console.log('Sesión cerrada');
   };
 
-  // Proporciona el contexto a los componentes hijos
+  // ==========================================
+  // RENDERIZADO CONDICIONAL
+  // ==========================================
+  
+  /**
+   * Mientras carga, no renderiza nada (evita parpadeo)
+   * Esto previene que se muestre el login brevemente mientras se verifica el token
+   */
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        backgroundColor: '#f5f5f5'
+      }}>
+        {/* Puedes agregar un spinner aquí si quieres */}
+        <div>Cargando...</div>
+      </div>
+    );
+  }
+
+  // ==========================================
+  // PROVIDER
+  // ==========================================
+  
+  /**
+   * Proporciona el contexto a todos los componentes hijos
+   */
   return (
     <AuthContext.Provider value={{ isAuthenticated, login, logout, role, token }}>
-      {children} {/* Renderiza los componentes hijos dentro del proveedor */}
+      {children}
     </AuthContext.Provider>
   );
 };
 
-// Hook personalizado para usar el contexto de autenticación
+// ==========================================
+// HOOK PERSONALIZADO
+// ==========================================
+
+/**
+ * Hook para acceder al contexto de autenticación
+ * Lanza error si se usa fuera del AuthProvider
+ * 
+ * @returns Objeto con estado y funciones de autenticación
+ * 
+ * Ejemplo de uso:
+ * const { isAuthenticated, role, login, logout } = useAuth();
+ */
 export const useAuth = () => {
-  const context = useContext(AuthContext); // Obtiene el contexto actual
-  if (context === undefined) { // Verifica si el contexto está disponible
-    throw new Error('useAuth debe usarse dentro de un AuthProvider'); // Lanza un error si no está dentro de AuthProvider
+  const context = useContext(AuthContext);
+  
+  if (context === undefined) {
+    throw new Error('useAuth debe usarse dentro de un AuthProvider');
   }
-  return context; // Devuelve el contexto si está disponible
+  
+  return context;
 };

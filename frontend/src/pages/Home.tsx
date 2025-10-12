@@ -116,7 +116,7 @@ const Home: React.FC = () => {
               }}
               className="fw-semibold px-4 py-2"
             >
-              Ir a mi Encuesta
+              Revisemos!
             </Button>
           )}
         </Container>

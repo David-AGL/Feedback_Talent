@@ -33,9 +33,11 @@ const Login = () => {  // Componente funcional para la página de login
         // Decodificar el token para obtener el rol
         const decoded = JSON.parse(atob(token.split('.')[1]));
         const role = decoded.role;
+        const userId = decoded.userId;
 
         console.log("Token decodificado:", decoded);
         console.log("Rol:", role);
+        
 
         // Redirigir según el rol
         switch(role) {
@@ -46,7 +48,7 @@ const Login = () => {  // Componente funcional para la página de login
             navigate("/surveyemployee");
             break;
           case 'company':
-            navigate("/dashboard");
+            navigate(`/company-profile/${userId}`);
             break;
           default:
             navigate("/"); // Ruta por defecto si el rol no coincide
