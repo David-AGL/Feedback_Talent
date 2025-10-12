@@ -171,4 +171,16 @@ router.get("/company/:companyUserId/summary", async (req: Request, res: Response
   }
 });
 
+router.get("/company/:companyUserId", async (req: Request, res: Response) => {
+  try {
+    const { companyUserId } = req.params;
+    const responses = await ResponseModel.find({ companyUserId })
+    return res.status(200).json(responses);
+  }
+  catch (error) {
+    console.error("Error obteniendo respuestas:", error);
+    return res.status(500).json({ message: "Error al obtener respuestas" });
+  }
+});
+
 export default router;

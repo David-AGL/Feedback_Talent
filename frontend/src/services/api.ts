@@ -16,3 +16,10 @@ export const submitSurvey = async (data: any) => {
 export const getRatings = async () => {
   return api.get("/ratings");  // Endpoint para dashboard de empresas
 };
+
+export const getResponseSummary= async(companyUserId: string) =>{
+  return api.get(`/responses/company/${companyUserId}/summary`);
+}
+export const getAllResponses= async(companyUserId: string) =>{
+  return api.get(`/responses/company/${companyUserId}`);
+}
