@@ -578,7 +578,7 @@ const CompanyProfile = () => {
             mb: 4,       // Margen inferior de 32px
             borderRadius: 4,  // Bordes muy redondeados
             // Gradiente morado de fondo
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: '#667eea',
             color: 'white'    // Texto blanco para contraste
           }}
         >

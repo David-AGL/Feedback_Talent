@@ -256,7 +256,7 @@ const SurveyCandidate = () => {
               sx={{
                 fontWeight: 700, // Texto en negrita
                 // Gradiente aplicado al texto
-                background: 'linear-gradient(135deg, #0A66C2 0%, #00D9B1 100%)',
+                background: '#0A66C2',
                 WebkitBackgroundClip: 'text',      // Clip del gradiente al texto
                 WebkitTextFillColor: 'transparent', // Hace el texto transparente para ver el gradiente
                 mb: 1 // Margen inferior
@@ -380,7 +380,7 @@ const SurveyCandidate = () => {
                             minWidth: 40,
                             height: 40,
                             borderRadius: '50%', // Hace el círculo
-                            background: 'linear-gradient(135deg, #0A66C2 0%, #00D9B1 100%)',
+                            background: ' #0A66C2',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',

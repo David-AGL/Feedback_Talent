@@ -196,17 +196,17 @@ const Home: React.FC = () => {
             {
               title: 'Feedback Anónimo',
               description: 'Respuestas completamente anónimas para mayor sinceridad',
-              gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              gradient: '#667eea',
             },
             {
               title: 'Análisis en Tiempo Real',
               description: 'Visualiza métricas y tendencias instantáneamente',
-              gradient: 'linear-gradient(135deg, #0A66C2 0%, #00D9B1 100%)',
+              gradient: '#00D9B1',
             },
             {
               title: 'Fácil de Usar',
               description: 'Interfaz intuitiva diseñada para todos los usuarios',
-              gradient: 'linear-gradient(135deg, #764ba2 0%, #00D9B1 100%)',
+              gradient: '#764ba2',
             },
           ].map((feature, i) => (
             <Col md={4} key={i}>
