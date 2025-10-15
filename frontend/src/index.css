@@ -175,3 +175,8 @@ main {
 }
 
 .required { color: var(--error); }
+
+.accordion-button:hover {
+  background-color: #e9ecef !important;
+  color: var(--text-primary) !important;
+}
