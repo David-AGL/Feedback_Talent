@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from '../contexts/AuthContext';
 
 const MyNavbar: React.FC = () => {
-  const { isAuthenticated, logout, role } = useAuth();
+  const { isAuthenticated, logout, role, companyId } = useAuth(); // Obtener companyId
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -66,7 +66,7 @@ const MyNavbar: React.FC = () => {
 
                 {/* Mostrar Perfil de Empresa solo para company */}
                 {role === 'company' && (
-                  <Nav.Link as={Link} to="/companyprofile" style={{ fontWeight: 500 }}>Perfil</Nav.Link>
+                  <Nav.Link as={Link} to={`/company-profile/${companyId}`} style={{ fontWeight: 500 }}>Perfil</Nav.Link>
                 )}
 
                 {/* Mostrar Perfil de Usuario solo para employee y candidate */}

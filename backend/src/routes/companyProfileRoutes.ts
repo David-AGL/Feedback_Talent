@@ -13,6 +13,11 @@ const router = express.Router();
 router.get("/profile/:companyUserId", async (req: Request, res: Response) => {
   try {
     const { companyUserId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(companyUserId)) {
+      return res.status(400).json({ message: "ID de empresa inválido" });
+    }
+
     const token = req.headers.authorization?.replace("Bearer ", "");
 
     if (!token) {
@@ -64,6 +69,11 @@ router.get("/profile/:companyUserId", async (req: Request, res: Response) => {
 router.get("/stats/:companyUserId", async (req: Request, res: Response) => {
   try {
     const { companyUserId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(companyUserId)) {
+      return res.status(400).json({ message: "ID de empresa inválido" });
+    }
+
     const token = req.headers.authorization?.replace("Bearer ", "");
 
     if (!token) {
@@ -113,6 +123,11 @@ router.get("/stats/:companyUserId", async (req: Request, res: Response) => {
 router.get("/stats/:companyUserId/category/:categoria", async (req: Request, res: Response) => {
   try {
     const { companyUserId, categoria } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(companyUserId)) {
+      return res.status(400).json({ message: "ID de empresa inválido" });
+    }
+
     const token = req.headers.authorization?.replace("Bearer ", "");
 
     if (!token) {
@@ -182,6 +197,11 @@ router.get("/reviewers/:companyUserId", async (req: Request, res: Response) => {
   try {
     const { companyUserId } = req.params;
     const { search } = req.query; // Parámetro de búsqueda
+
+    if (!mongoose.Types.ObjectId.isValid(companyUserId)) {
+      return res.status(400).json({ message: "ID de empresa inválido" });
+    }
+
     const token = req.headers.authorization?.replace("Bearer ", "");
 
     if (!token) {

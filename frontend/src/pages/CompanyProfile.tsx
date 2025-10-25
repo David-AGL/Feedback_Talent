@@ -227,19 +227,23 @@ const CompanyProfile = () => {
           }
         );
 
-        // Si la respuesta no es exitosa (status 4xx o 5xx), lanza error
-        if (!response.ok) throw new Error("Error al cargar perfil de empresa");
-
         const data = await response.json();
-        setCompanyData(data); // Guarda los datos de la empresa en el estado
+        if (!response.ok) {
+          throw new Error(data.message || "Error al cargar perfil de empresa");
+        }
+        setCompanyData(data);
       } catch (err: any) {
-        setError(err.message); // Guarda el error para mostrarlo al usuario
+        setError(err.message);
       }
     };
 
-    // Solo ejecuta si tenemos tanto el ID de la empresa como el token
-    if (companyId && token) {
+    // Solo ejecuta si tenemos un ID de empresa válido y el token
+    if (companyId && token && companyId !== 'undefined') {
       fetchCompanyData();
+    } else {
+      // Si el ID no es válido, establece un error y detiene la carga
+      setError("ID de empresa no proporcionado o inválido.");
+      setLoading(false);
     }
   }, [companyId, token]); // Dependencias: se re-ejecuta si cambian
 
@@ -296,7 +300,7 @@ const CompanyProfile = () => {
       }
     };
 
-    if (companyId && token) {
+    if (companyId && token && companyId !== 'undefined') {
       fetchCategoryStats();
     }
   }, [companyId, token]);
@@ -344,7 +348,7 @@ const CompanyProfile = () => {
       }
     };
 
-    if (companyId && token && role === 'company') {
+    if (companyId && token && role === 'company' && companyId !== 'undefined') {
       fetchReviewers();
     }
   }, [companyId, token, role]);

@@ -9,11 +9,12 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
  * Proporciona información y métodos relacionados con la sesión del usuario
  */
 interface AuthContextType {
-  isAuthenticated: boolean;     // Indica si el usuario está autenticado
-  login: (token: string) => void; // Función para iniciar sesión con un token
-  logout: () => void;            // Función para cerrar sesión
-  role: string | null;           // Rol del usuario (employee, candidate, company)
-  token: string | null;          // Token JWT del usuario
+  isAuthenticated: boolean;
+  login: (token: string) => void;
+  logout: () => void;
+  role: string | null;
+  token: string | null;
+  companyId: string | null; // ID de la empresa autenticada
 }
 
 // ==========================================
@@ -39,7 +40,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [role, setRole] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true); // ← AGREGAR estado de loading
+  const [companyId, setCompanyId] = useState<string | null>(null); // Estado para el ID de la empresa
+  const [loading, setLoading] = useState(true);
 
   // ==========================================
   // EFECTO: RESTAURAR SESIÓN AL MONTAR
@@ -72,7 +74,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsAuthenticated(true);
         setRole(decoded.role);
         setToken(storedToken);
-        console.log('Sesión restaurada:', decoded.role);
+        setCompanyId(decoded.userId); // Restaura el ID de la empresa
+        console.log('Sesión restaurada: company ID:', decoded.userId);
       } catch (error) {
         // Token inválido, limpia localStorage
         console.error('Token inválido, limpiando:', error);
@@ -99,7 +102,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsAuthenticated(true);
       setRole(decoded.role);
       setToken(newToken);
-      console.log('Login exitoso:', decoded.role);
+      setCompanyId(decoded.userId); // Guarda el ID de la empresa
+      console.log('Login exitoso: company ID:', decoded.userId);
     } catch (error) {
       console.error('Error decodificando token:', error);
       setIsAuthenticated(false);
@@ -120,6 +124,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsAuthenticated(false);
     setRole(null);
     setToken(null);
+    setCompanyId(null); // Limpia el ID de la empresa
     console.log('Sesión cerrada');
   };
 
@@ -154,7 +159,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
    * Proporciona el contexto a todos los componentes hijos
    */
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, role, token }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout, role, token, companyId }}>
       {children}
     </AuthContext.Provider>
   );
