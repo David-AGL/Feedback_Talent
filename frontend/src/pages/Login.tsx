@@ -131,19 +131,25 @@ const Login = () => {  // Componente funcional para la página de login
             type="submit"
             fullWidth
             variant="contained"
-            color="primary"
             disabled={loading}
-            sx={{ mt: 3, py: 1.5 }}  // Margen superior de 24px, padding vertical
+            sx={{ 
+              mt: 3, 
+              py: 1.5,
+              backgroundColor: 'var(--primary-color)',
+              '&:hover': {
+                backgroundColor: 'var(--primary-hover)'
+              }
+            }}
           >
             {loading ? "Iniciando..." : "Entrar"}  
           </Button>
         </form>
         <Box sx={{ mt: 2, textAlign: 'center', width: '100%' }}>  
           <Typography variant="body2" color="text.secondary">  
-            ¿No tienes cuenta? <a href="/register" style={{ color: '#007BFF' }}>Regístrate aquí</a>  
+            ¿No tienes cuenta? <a href="/register">Regístrate aquí</a>  
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-            ¿Olvidaste tu contraseña? <a href="/auth/Recover" style={{ color: '#007BFF' }}>Recupérala aquí</a>
+            ¿Olvidaste tu contraseña? <a href="/auth/Recover">Recupérala aquí</a>
           </Typography>
         </Box>
       </Paper>

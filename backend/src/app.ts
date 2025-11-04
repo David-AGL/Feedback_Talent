@@ -5,6 +5,7 @@ import questionsRoutes from "./routes/questionsRoutes"; // Importa las rutas de 
 import passwordResetRouter from "./routes/passwordReset";
 import responseRoutes from "./routes/responseRoutes";
 import companyProfileRoutes from "./routes/companyProfileRoutes";
+import userProfileRoutes from "./routes/userProfileRoutes";
 
 const app = express();
 
@@ -22,5 +23,6 @@ app.use("/api/preguntas", questionsRoutes); // Monta las rutas de preguntas
 app.use("/api/auth", passwordResetRouter); // Rutas de reseteo de contraseña
 app.use("/api/responses", responseRoutes);
 app.use("/api/company", companyProfileRoutes); 
+app.use("/api/users", userProfileRoutes);
 
 export default app;

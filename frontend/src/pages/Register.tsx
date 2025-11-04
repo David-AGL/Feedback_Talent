@@ -243,16 +243,22 @@ const Register = () => {  // Componente funcional para la página de registro
             type="submit"
             fullWidth
             variant="contained"
-            color="primary"
             disabled={loading}
-            sx={{ mt: 3, py: 1.5 }}
+            sx={{ 
+              mt: 3, 
+              py: 1.5,
+              backgroundColor: 'var(--primary-color)',
+              '&:hover': {
+                backgroundColor: 'var(--primary-hover)'
+              }
+            }}
           >
             {loading ? "Registrando..." : "Registrarse"}
           </Button>
         </form>
         <Box sx={{ mt: 2, textAlign: 'center', width: '100%' }}>
           <Typography variant="body2" color="text.secondary">
-            ¿Ya tienes cuenta? <a href="/" style={{ color: '#007BFF' }}>Inicia sesión aquí</a>
+            ¿Ya tienes cuenta? <a href="/">Inicia sesión aquí</a>
           </Typography>
         </Box>
       </Paper>

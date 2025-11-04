@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from '../contexts/AuthContext';
 
 const MyNavbar: React.FC = () => {
-  const { isAuthenticated, logout, role, companyId } = useAuth(); // Obtener companyId
+  const { isAuthenticated, logout, role, companyId, user } = useAuth(); // Obtener companyId y user
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -16,10 +16,7 @@ const MyNavbar: React.FC = () => {
   console.log('isAuthenticated:', isAuthenticated);
 
   return (
-    <Navbar bg="dark" variant="dark" expand="lg" style={{
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
-      }}>
+    <Navbar expand="lg">
       <Container>
         <Navbar.Brand as={Link} to="/">
           <img
@@ -38,7 +35,7 @@ const MyNavbar: React.FC = () => {
           <Nav className="me-auto">
             {isAuthenticated ? (
               <>
-                <Nav.Link as={Link} to="/" style={{ fontWeight: 500 }}>Inicio</Nav.Link>
+                <Nav.Link as={Link} to="/">Inicio</Nav.Link>
 
                 {/* Mostrar Encuestas solo para employee y candidate */}
                 {(role === 'employee' || role === 'candidate') && (
@@ -55,46 +52,47 @@ const MyNavbar: React.FC = () => {
                         </NavDropdown.Item>
                       )}
                     </NavDropdown>
-                    <Nav.Link as={Link} to="/feedback-history" style={{ fontWeight: 500 }}>Historial</Nav.Link>
+                    <Nav.Link as={Link} to="/feedback-history">Historial</Nav.Link>
                   </>
                 )}
 
                 {/* Mostrar Dashboard solo para company */}
                 {role === 'company' && (
-                  <Nav.Link as={Link} to="/dashboard" style={{ fontWeight: 500 }}>Dashboard</Nav.Link>
+                  <Nav.Link as={Link} to="/dashboard">Dashboard</Nav.Link>
                 )}
 
                 {/* Mostrar Perfil de Empresa solo para company */}
                 {role === 'company' && (
-                  <Nav.Link as={Link} to={`/company-profile/${companyId}`} style={{ fontWeight: 500 }}>Perfil</Nav.Link>
+                  <Nav.Link as={Link} to={`/company-profile/${companyId}`}>Perfil</Nav.Link>
                 )}
 
                 {/* Mostrar Perfil de Usuario solo para employee y candidate */}
-                {(role === 'employee' || role === 'candidate') && (
-                  <Nav.Link as={Link} to="/userprofile" style={{ fontWeight: 500 }}>Perfil</Nav.Link>
+                {(role === 'employee' || role === 'candidate') && user && (
+                  <Nav.Link as={Link} to={`/user-profile/${user._id}`}>Perfil</Nav.Link>
                 )}
 
                 <Nav.Link onClick={handleLogout} style={{ 
                     cursor: 'pointer',
                     fontWeight: 500,
-                    background: 'rgba(255,255,255,0.2)',
+                    backgroundColor: 'var(--secondary-color)',
+                    color: 'white',
                     borderRadius: '8px',
                     padding: '8px 16px',
                     marginLeft: '8px',
                     transition: 'all 0.3s ease' }}
                     onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(255,255,255,0.3)';
+                    e.currentTarget.style.backgroundColor = 'var(--secondary-hover)';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'rgba(255,255,255,0.2)';
+                    e.currentTarget.style.backgroundColor = 'var(--secondary-color)';
                   }}>
                   Log out
                 </Nav.Link>
               </>
             ) : (
               <>
-                <Nav.Link as={Link} to="/login" style={{ fontWeight: 500 }}>Log in</Nav.Link>
-                <Nav.Link as={Link} to="/register" style={{ fontWeight: 500 }}>Regístrate</Nav.Link>
+                <Nav.Link as={Link} to="/login">Log in</Nav.Link>
+                <Nav.Link as={Link} to="/register">Regístrate</Nav.Link>
               </>
             )}
           </Nav>

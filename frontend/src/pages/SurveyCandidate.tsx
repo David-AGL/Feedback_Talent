@@ -229,7 +229,7 @@ const SurveyCandidate = () => {
     <Box
       sx={{
         minHeight: '100vh', // Altura mínima de toda la pantalla
-        background: 'linear-gradient(135deg, #0A66C2 0%, #00D9B1 100%)', // Gradiente azul-verde
+        background: 'var(--background-light)',
         py: 6,  // Padding vertical de 48px
         px: 2   // Padding horizontal de 16px
       }}
@@ -255,10 +255,7 @@ const SurveyCandidate = () => {
               variant="h3"
               sx={{
                 fontWeight: 700, // Texto en negrita
-                // Gradiente aplicado al texto
-                background: '#0A66C2',
-                WebkitBackgroundClip: 'text',      // Clip del gradiente al texto
-                WebkitTextFillColor: 'transparent', // Hace el texto transparente para ver el gradiente
+                color: 'var(--primary-color)',
                 mb: 1 // Margen inferior
               }}
             >
@@ -314,7 +311,7 @@ const SurveyCandidate = () => {
                 <Typography variant="body2" color="text.secondary">
                   Progreso de la encuesta
                 </Typography>
-                <Typography variant="body2" sx={{ color: '#0A66C2', fontWeight: 'bold' }}>
+                <Typography variant="body2" sx={{ color: 'var(--primary-color)', fontWeight: 'bold' }}>
                   {Math.round(progress)}%
                 </Typography>
               </Box>
@@ -326,10 +323,10 @@ const SurveyCandidate = () => {
                 sx={{
                   height: 8,          // Altura de la barra
                   borderRadius: 4,    // Bordes redondeados
-                  bgcolor: 'rgba(0, 217, 177, 0.1)', // Fondo de la barra
+                  bgcolor: 'var(--accent-color)', // Fondo de la barra
                   '& .MuiLinearProgress-bar': {
                     borderRadius: 4,
-                    background: 'linear-gradient(90deg, #0A66C2 0%, #00D9B1 100%)', // Gradiente
+                    background: `linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%)`, // Gradiente
                   }
                 }}
               />
@@ -363,12 +360,12 @@ const SurveyCandidate = () => {
                         p: 3, // Padding interno
                         border: '2px solid',
                         // Borde rojo si hay error, verde claro si no
-                        borderColor: errors[q._id.toString()] ? 'error.main' : 'rgba(0, 217, 177, 0.2)',
+                        borderColor: errors[q._id.toString()] ? 'error.main' : 'var(--accent-color)',
                         borderRadius: 3,
                         transition: 'all 0.3s ease', // Animación suave
                         '&:hover': {
-                          borderColor: '#00D9B1', // Borde verde al pasar el mouse
-                          boxShadow: '0 4px 20px rgba(0, 217, 177, 0.15)', // Sombra en hover
+                          borderColor: 'var(--secondary-color)', // Borde verde al pasar el mouse
+                          boxShadow: `0 4px 20px var(--accent-color)`, // Sombra en hover
                         }
                       }}
                     >
@@ -380,7 +377,7 @@ const SurveyCandidate = () => {
                             minWidth: 40,
                             height: 40,
                             borderRadius: '50%', // Hace el círculo
-                            background: ' #0A66C2',
+                            background: 'var(--primary-color)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -428,10 +425,10 @@ const SurveyCandidate = () => {
                                 size="large"     // Tamaño grande
                                 sx={{
                                   '& .MuiRating-iconFilled': {
-                                    color: '#00D9B1', // Color de estrellas llenas
+                                    color: 'var(--secondary-color)', // Color de estrellas llenas
                                   },
                                   '& .MuiRating-iconHover': {
-                                    color: '#0A66C2', // Color al pasar el mouse
+                                    color: 'var(--primary-color)', // Color al pasar el mouse
                                   }
                                 }}
                               />
@@ -464,10 +461,10 @@ const SurveyCandidate = () => {
                                 valueLabelDisplay="on" // Muestra el valor siempre
                                 sx={{
                                   '& .MuiSlider-thumb': {
-                                    background: 'linear-gradient(135deg, #0A66C2 0%, #00D9B1 100%)',
+                                    background: `linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%)`,
                                   },
                                   '& .MuiSlider-track': {
-                                    background: 'linear-gradient(90deg, #0A66C2 0%, #00D9B1 100%)',
+                                    background: `linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%)`,
                                   },
                                   '& .MuiSlider-rail': {
                                     opacity: 0.3, // Opacidad del riel no seleccionado
@@ -498,10 +495,10 @@ const SurveyCandidate = () => {
                             '& .MuiOutlinedInput-root': {
                               borderRadius: 2,
                               '&:hover fieldset': {
-                                borderColor: '#00D9B1', // Borde verde al pasar el mouse
+                                borderColor: 'var(--secondary-color)', // Borde verde al pasar el mouse
                               },
                               '&.Mui-focused fieldset': {
-                                borderColor: '#0A66C2', // Borde azul al enfocar
+                                borderColor: 'var(--primary-color)', // Borde azul al enfocar
                               }
                             }
                           }}
@@ -537,13 +534,12 @@ const SurveyCandidate = () => {
                       fontSize: '1.1rem',
                       fontWeight: 600,
                       borderRadius: 3,
-                      background: 'linear-gradient(135deg, #0A66C2 0%, #00D9B1 100%)',
-                      boxShadow: '0 4px 15px rgba(0, 217, 177, 0.4)',
+                      background: 'var(--primary-color)',
+                      boxShadow: `0 4px 15px var(--accent-color)`,
                       transition: 'all 0.3s ease',
                       '&:hover': {
-                        // Invierte el gradiente en hover
-                        background: 'linear-gradient(135deg, #00D9B1 0%, #0A66C2 100%)',
-                        boxShadow: '0 6px 20px rgba(0, 217, 177, 0.6)',
+                        background: 'var(--primary-hover)',
+                        boxShadow: `0 6px 20px var(--accent-color)`,
                         transform: 'translateY(-2px)', // Eleva el botón
                       },
                       '&:disabled': {

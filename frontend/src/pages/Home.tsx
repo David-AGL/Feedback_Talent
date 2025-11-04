@@ -51,9 +51,9 @@ const Home: React.FC = () => {
 
   // Estadísticas
   const stats = [
-    { icon: <FaUsers size={40} />, value: '10,000+', label: 'Usuarios Activos', color: '#667eea' },
-    { icon: <FaChartBar size={40} />, value: '50,000+', label: 'Encuestas Completadas', color: '#764ba2' },
-    { icon: <FaChartLine size={40} />, value: '95%', label: 'Satisfacción', color: '#00D9B1' },
+    { icon: <FaUsers size={40} />, value: '10,000+', label: 'Usuarios Activos', color: 'var(--primary-color)' },
+    { icon: <FaChartBar size={40} />, value: '50,000+', label: 'Encuestas Completadas', color: 'var(--primary-hover)' },
+    { icon: <FaChartLine size={40} />, value: '95%', label: 'Satisfacción', color: 'var(--secondary-color)' },
   ];
 
   const getCategoryColor = (category: string) => {
@@ -77,7 +77,7 @@ const Home: React.FC = () => {
       <section
         className="text-center text-white py-5"
         style={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #00D9B1 100%)',
+          background: `linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%)`,
         }}
       >
         <Container>
@@ -147,7 +147,7 @@ const Home: React.FC = () => {
           <h3
             className="fw-bold mb-2 text-center"
             style={{
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              background: `linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%)`,
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
             }}
@@ -183,7 +183,7 @@ const Home: React.FC = () => {
         <h3
           className="fw-bold text-center mb-4"
           style={{
-            background: 'linear-gradient(135deg, #0A66C2 0%, #00D9B1 100%)',
+            background: `linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%)`,
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
           }}
@@ -196,17 +196,17 @@ const Home: React.FC = () => {
             {
               title: 'Feedback Anónimo',
               description: 'Respuestas completamente anónimas para mayor sinceridad',
-              gradient: '#667eea',
+              gradient: 'var(--primary-color)',
             },
             {
               title: 'Análisis en Tiempo Real',
               description: 'Visualiza métricas y tendencias instantáneamente',
-              gradient: '#00D9B1',
+              gradient: 'var(--secondary-color)',
             },
             {
               title: 'Fácil de Usar',
               description: 'Interfaz intuitiva diseñada para todos los usuarios',
-              gradient: '#764ba2',
+              gradient: 'var(--primary-hover)',
             },
           ].map((feature, i) => (
             <Col md={4} key={i}>

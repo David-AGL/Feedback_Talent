@@ -132,7 +132,7 @@ setTimeout(() => {
     <Box
       sx={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: 'var(--background-light)',
         py: 6,
         px: 2
       }}
@@ -153,9 +153,7 @@ setTimeout(() => {
               variant="h3"
               sx={{
                 fontWeight: 700,
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
+                color: 'var(--primary-color)',
                 mb: 1
               }}
             >
@@ -195,7 +193,7 @@ setTimeout(() => {
                 <Typography variant="body2" color="text.secondary">
                   Progreso de la encuesta
                 </Typography>
-                <Typography variant="body2" color="primary" fontWeight="bold">
+                <Typography variant="body2" sx={{ color: 'var(--primary-color)', fontWeight: 'bold' }}>
                   {Math.round(progress)}%
                 </Typography>
               </Box>
@@ -205,10 +203,10 @@ setTimeout(() => {
                 sx={{
                   height: 8,
                   borderRadius: 4,
-                  bgcolor: 'rgba(102, 126, 234, 0.1)',
+                  bgcolor: 'var(--accent-color)',
                   '& .MuiLinearProgress-bar': {
                     borderRadius: 4,
-                    background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
+                    background: `linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%)`,
                   }
                 }}
               />
@@ -233,12 +231,12 @@ setTimeout(() => {
                       sx={{
                         p: 3,
                         border: '2px solid',
-                        borderColor: errors[q._id.toString()] ? 'error.main' : 'rgba(102, 126, 234, 0.2)',
+                        borderColor: errors[q._id.toString()] ? 'error.main' : 'var(--accent-color)',
                         borderRadius: 3,
                         transition: 'all 0.3s ease',
                         '&:hover': {
-                          borderColor: 'primary.main',
-                          boxShadow: '0 4px 20px rgba(102, 126, 234, 0.15)',
+                          borderColor: 'var(--secondary-color)',
+                          boxShadow: `0 4px 20px var(--accent-color)`,
                         }
                       }}
                     >
@@ -248,7 +246,7 @@ setTimeout(() => {
                             minWidth: 40,
                             height: 40,
                             borderRadius: '50%',
-                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            background: 'var(--primary-color)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -286,10 +284,10 @@ setTimeout(() => {
                                 size="large"
                                 sx={{
                                   '& .MuiRating-iconFilled': {
-                                    color: '#764ba2',
+                                    color: 'var(--secondary-color)',
                                   },
                                   '& .MuiRating-iconHover': {
-                                    color: '#667eea',
+                                    color: 'var(--primary-color)',
                                   }
                                 }}
                               />
@@ -317,10 +315,10 @@ setTimeout(() => {
                                 valueLabelDisplay="on"
                                 sx={{
                                   '& .MuiSlider-thumb': {
-                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                    background: `linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%)`,
                                   },
                                   '& .MuiSlider-track': {
-                                    background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
+                                    background: `linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%)`,
                                   },
                                   '& .MuiSlider-rail': {
                                     opacity: 0.3,
@@ -349,10 +347,10 @@ setTimeout(() => {
                             '& .MuiOutlinedInput-root': {
                               borderRadius: 2,
                               '&:hover fieldset': {
-                                borderColor: 'primary.main',
+                                borderColor: 'var(--secondary-color)',
                               },
                               '&.Mui-focused fieldset': {
-                                borderColor: 'primary.main',
+                                borderColor: 'var(--primary-color)',
                               }
                             }
                           }}
@@ -383,12 +381,12 @@ setTimeout(() => {
                       fontSize: '1.1rem',
                       fontWeight: 600,
                       borderRadius: 3,
-                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                      boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
+                      background: 'var(--primary-color)',
+                      boxShadow: `0 4px 15px var(--accent-color)`,
                       transition: 'all 0.3s ease',
                       '&:hover': {
-                        background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
-                        boxShadow: '0 6px 20px rgba(102, 126, 234, 0.6)',
+                        background: 'var(--primary-hover)',
+                        boxShadow: `0 6px 20px var(--accent-color)`,
                         transform: 'translateY(-2px)',
                       },
                       '&:disabled': {

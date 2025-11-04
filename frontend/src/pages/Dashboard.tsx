@@ -154,8 +154,8 @@ const Dashboard = () => {
               <YAxis />
               <Tooltip />
               <Legend verticalAlign="top" />
-              <Bar dataKey="promedio" fill="#31b70cff" name="Promedio" />
-              <Bar dataKey="cantidad" fill="#185be1ff" name="Cantidad" />
+              <Bar dataKey="promedio" fill="var(--secondary-color)" name="Promedio" />
+              <Bar dataKey="cantidad" fill="var(--primary-color)" name="Cantidad" />
             </BarChart>
           </ResponsiveContainer>
         </LocalizationProvider>

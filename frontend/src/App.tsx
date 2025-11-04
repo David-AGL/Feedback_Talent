@@ -10,6 +10,7 @@ import RecoverPassword from "./pages/RecoverPassword.tsx";
 import Profile from "./pages/Profile.tsx";
 import FeedbackHistory from './pages/FeedbackHistory';
 import CompanyProfile from "./pages/CompanyProfile.tsx"; // ← AGREGAR IMPORT
+import UserProfile from "./pages/UserProfile.tsx";
 import Navbar from "./components/navbar.tsx";
 import Footer from "./components/footer.tsx";
 import ProtectedRoute from "./components/protectedRoute.tsx";
@@ -59,15 +60,6 @@ const AppContent: React.FC = () => {
               </ProtectedRoute>
             } 
           />
-          <Route 
-            path="/userprofile" 
-            element={
-              <ProtectedRoute allowedRoles={['employee', 'candidate']}>
-                <Profile />
-              </ProtectedRoute>
-            } 
-          />
-
           {/* Rutas solo para company */}
           <Route 
             path="/dashboard" 
@@ -84,6 +76,14 @@ const AppContent: React.FC = () => {
             element={
               <ProtectedRoute allowedRoles={['employee', 'candidate', 'company']}>
                 <CompanyProfile />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/user-profile/:userId" 
+            element={
+              <ProtectedRoute allowedRoles={['employee', 'candidate', 'company']}>
+                <UserProfile />
               </ProtectedRoute>
             } 
           />

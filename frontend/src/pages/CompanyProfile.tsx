@@ -581,8 +581,7 @@ const CompanyProfile = () => {
             p: 4,        // Padding de 32px
             mb: 4,       // Margen inferior de 32px
             borderRadius: 4,  // Bordes muy redondeados
-            // Gradiente morado de fondo
-            background: '#667eea',
+            background: 'var(--primary-color)',
             color: 'white'    // Texto blanco para contraste
           }}
         >
@@ -598,7 +597,7 @@ const CompanyProfile = () => {
                 width: 100,
                 height: 100,
                 bgcolor: 'white',   // Fondo blanco
-                color: '#667eea'    // Ícono morado
+                color: 'var(--primary-color)'
               }}
             >
               <BusinessIcon sx={{ fontSize: 60 }} />
@@ -630,8 +629,7 @@ const CompanyProfile = () => {
           <Card
             sx={{
               mb: 4,  // Margen inferior
-              // Gradiente verde-azul de Magneto
-              background: 'linear-gradient(135deg, #0A66C2 0%, #00D9B1 100%)',
+              background: 'var(--secondary-color)',
               color: 'white'
             }}
           >
@@ -719,7 +717,7 @@ const CompanyProfile = () => {
                       sx={{
                         borderRadius: 2,
                         '&:hover': {
-                          bgcolor: 'rgba(102, 126, 234, 0.05)'  // Color suave al pasar mouse
+                          bgcolor: 'var(--accent-color)'
                         }
                       }}
                     >
@@ -740,7 +738,7 @@ const CompanyProfile = () => {
                           <Chip
                             label={`${category.count} respuestas`}
                             size="small"
-                            sx={{ bgcolor: '#667eea', color: 'white' }}
+                            sx={{ bgcolor: 'var(--primary-color)', color: 'white' }}
                           />
                         </Box>
                         
@@ -877,8 +875,8 @@ const CompanyProfile = () => {
                           border: '1px solid #e0e0e0',  // Borde gris claro
                           '&:hover': {
                             // Estilos al pasar el mouse
-                            bgcolor: 'rgba(102, 126, 234, 0.1)',  // Fondo morado claro
-                            borderColor: '#667eea'                 // Borde morado
+                            bgcolor: 'var(--accent-color)',
+                            borderColor: 'var(--primary-color)'
                           }
                         }}
                       >
@@ -887,7 +885,7 @@ const CompanyProfile = () => {
                             Círculo con ícono de persona
                             ========================================== */}
                         <ListItemAvatar>
-                          <Avatar sx={{ bgcolor: '#667eea' }}>
+                          <Avatar sx={{ bgcolor: 'var(--primary-color)' }}>
                             <PersonIcon />
                           </Avatar>
                         </ListItemAvatar>

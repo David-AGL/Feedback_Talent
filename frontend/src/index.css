@@ -18,13 +18,15 @@
 
 /* Variables de colores personalizadas (Magneto-inspired) */
 :root {
-  --primary-color: #0A66C2; /* Azul principal para enlaces y nav */
-  --secondary-color: #0073B1; /* Azul claro para hover */
-  --accent-color: #FF6B00; /* Naranja para botones CTAs */
-  --accent-hover: #E67E22; /* Naranja más oscuro para hover */
+  --primary-color: #1c0f4d; /* Azul oscuro principal de Magneto */
+  --secondary-color: #00a99d; /* Verde de Magneto */
+  --accent-color: #e0f5f4; /* Azul claro de Magneto */
+  --primary-hover: #3c2d6e; /* Un poco más claro para hover */
+  --secondary-hover: #008a7e; /* Verde más oscuro para hover */
   --text-primary: #212529; /* Negro/gris oscuro para modo claro */
   --text-secondary: #6C757D; /* Gris medio */
   --background-light: #F8F9FA; /* Fondo claro */
+  --background-white: #ffffff;
   --success: #28A745; /* Verde para confirmaciones */
   --error: #DC3545; /* Rojo para errores */
 }
@@ -97,7 +99,7 @@ a {
 }
 
 a:hover {
-  color: var(--secondary-color);
+  color: var(--primary-hover);
 }
 
 button {
@@ -107,15 +109,14 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: var(--accent-color);
+  background-color: var(--primary-color);
   color: white;
   cursor: pointer;
   transition: background-color 0.2s, border-color 0.25s;
 }
 
 button:hover {
-  background-color: var(--accent-hover);
-  border-color: var(--secondary-color);
+  background-color: var(--primary-hover);
 }
 
 button:focus,
@@ -125,7 +126,7 @@ button:focus-visible {
 
 /* Estilos para la barra de navegación */
 nav {
-  background-color: var(--primary-color);
+  background-color: var(--background-white);
   padding: 1rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -140,7 +141,7 @@ nav ul {
 }
 
 nav a {
-  color: white;
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -149,7 +150,7 @@ nav a {
 }
 
 nav a:hover {
-  color: #F8F9FA;
+  color: var(--primary-color);
 }
 
 /* Estilos para el contenido principal */
