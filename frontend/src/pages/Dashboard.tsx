@@ -6,6 +6,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Button,
 } from "@mui/material";
 import {
   BarChart,
@@ -135,6 +136,28 @@ const Dashboard = () => {
               onChange={(newValue: dayjs.Dayjs | null) => setEndDate(newValue)}
               slotProps={{ textField: { size: "small" } }}
             />
+            <Button
+              variant="contained"
+              onClick={() => {
+              const csvContent =
+                "Categoría,Promedio,Cantidad\n" +
+                data.map((row) => `${row.categoria},${row.promedio},${row.cantidad}`).join("\n");
+              // Añadimos BOM para que Excel reconozca UTF-8
+              const bom = "\uFEFF";
+              const blob = new Blob([bom + csvContent], { type: "text/csv;charset=utf-8;" });
+              const url = URL.createObjectURL(blob);
+              const link = document.createElement("a");
+              link.setAttribute("href", url);
+              link.setAttribute("download", "feedback_data.csv");
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              URL.revokeObjectURL(url);
+              }}
+              sx={{ height: 40 }}
+            >
+              Exportar a Excel
+            </Button>
           </Box>
 
           {/* Gráfico */}
