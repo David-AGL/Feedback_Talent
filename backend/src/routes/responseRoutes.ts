@@ -171,6 +171,8 @@ router.get("/company/:companyUserId/summary", async (req: Request, res: Response
   }
 });
 
+
+
 router.get("/company/:companyUserId", async (req: Request, res: Response) => {
   try {
     const { companyUserId } = req.params;
@@ -180,6 +182,105 @@ router.get("/company/:companyUserId", async (req: Request, res: Response) => {
   catch (error) {
     console.error("Error obteniendo respuestas:", error);
     return res.status(500).json({ message: "Error al obtener respuestas" });
+  }
+
+});
+
+router.get("/top-companies", async (req: Request, res: Response) => {
+  try {
+    const mongoose = await import("mongoose");
+
+    const topCompanies = await ResponseModel.aggregate([
+      // Filtramos solo respuestas con valor numérico
+      {
+        $match: {
+          $expr: { $isNumber: "$answer" }
+        }
+      },
+      //  Agrupamos por empresa
+      {
+        $group: {
+          _id: "$companyUserId",
+          avgRating: { $avg: "$answer" },
+          totalFeedbacks: { $sum: 1 }
+        }
+      },
+      // Ordenamos y limitamos a las 3 mejores
+      { $sort: { avgRating: -1 } },
+      { $limit: 3 },
+      // Unimos con la colección "users" usando companyUserId
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",          // companyUserId en responses
+          foreignField: "_id",        // _id en users
+          as: "companyInfo"
+        }
+      },
+      // Proyectamos los datos finales
+      {
+        $project: {
+          _id: 1,
+          avgRating: { $round: ["$avgRating", 2] },
+          totalFeedbacks: 1,
+          companyName: { $arrayElemAt: ["$companyInfo.name", 0] },
+          companyEmail: { $arrayElemAt: ["$companyInfo.email", 0] },
+          companyRole: { $arrayElemAt: ["$companyInfo.role", 0] }
+        }
+      }
+    ]);
+
+    console.log("Top Companies:", topCompanies);
+    res.status(200).json(topCompanies);
+  } catch (error) {
+    console.error(" Error obteniendo empresas mejor calificadas:", error);
+    res.status(500).json({ message: "Error al obtener las empresas mejor calificadas" });
+  }
+});
+
+
+router.get("/company/:companyUserId/reviewers", async (req: Request, res: Response) => {
+  try {
+    const { companyUserId } = req.params;
+    const mongoose = await import("mongoose");
+
+    const reviewers = await ResponseModel.aggregate([
+      {
+        $match: {
+          companyUserId: new mongoose.Types.ObjectId(companyUserId)
+        }
+      },
+      {
+        $group: {
+          _id: "$userId",
+          lastReviewDate: { $max: "$updatedAt" },
+          roles: { $addToSet: "$role" }
+        }
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "userInfo"
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          lastReviewDate: 1,
+          role: { $arrayElemAt: ["$roles", 0] },
+          name: { $arrayElemAt: ["$userInfo.name", 0] },
+          email: { $arrayElemAt: ["$userInfo.email", 0] }
+        }
+      },
+      { $sort: { lastReviewDate: -1 } }
+    ]);
+
+    res.status(200).json(reviewers);
+  } catch (error) {
+    console.error("Error obteniendo revisores:", error);
+    res.status(500).json({ message: "Error al obtener revisores" });
   }
 });
 

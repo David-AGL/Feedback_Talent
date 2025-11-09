@@ -1,17 +1,28 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Accordion, Button, Badge } from 'react-bootstrap';
 import { FaUsers, FaChartLine, FaChartBar, FaChevronDown } from 'react-icons/fa';
+import { getTopCompanies } from "../services/api";
 
 const Home: React.FC = () => {
   const { isAuthenticated, role } = useAuth();
   const navigate = useNavigate();
   const [activeKey, setActiveKey] = useState<string | null>('0');
+  const [topCompanies, setTopCompanies] = useState<any[]>([]); //para guardar las empresas mejores calificadas
 
   const handleAccordionToggle = (key: string) => {
     setActiveKey(activeKey === key ? null : key);
   };
+
+  useEffect(() => {
+    getTopCompanies()
+      .then((data) => {
+        console.log("Empresas mejor calificadas:", data);
+        setTopCompanies(data);
+      })
+      .catch((err) => console.error("Error al obtener empresas:", err));
+  }, []);
 
   // Noticias / Novedades
   const news = [
@@ -141,6 +152,55 @@ const Home: React.FC = () => {
             </Col>
           ))}
         </Row>
+
+        {/* Empresas mejor calificadas */}
+        <div className="bg-white p-4 rounded shadow-sm mb-5">
+          <h3
+            className="fw-bold mb-3 text-center"
+            style={{
+              background: `linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%)`,
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}
+          >
+            🌟 Empresas mejor calificadas
+          </h3>
+
+          {topCompanies.length > 0 ? (
+            <Row className="g-4 justify-content-center">
+              {topCompanies.map((company) => (
+                <Col md={4} key={company._id}>
+                  <Card
+                    className="border-0 shadow-sm h-100 text-center hover-shadow transition"
+                    onClick={() => navigate(`/company/${company._id}`)}
+                    title={`Ver perfil de ${company.companyName}`}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <Card.Body>
+                      <h5 className="fw-bold mb-2">
+                        {company.companyName || `Empresa #${company._id}`}
+                      </h5>
+                      <p className="text-muted mb-1">
+                        ⭐ Promedio:{" "}
+                        <span className="fw-semibold text-primary">
+                          {company.avgRating ? company.avgRating.toFixed(2) : "N/A"}
+                        </span>
+                      </p>
+                      <p className="text-muted mb-0">
+                        📝 Feedbacks: {company.totalFeedbacks}
+                      </p>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+          ) : (
+            <p className="text-center text-muted">
+              No hay datos de empresas aún.
+            </p>
+          )}
+        </div>
+
 
         {/* Noticias */}
         <div className="bg-white p-4 rounded shadow-sm mb-5">

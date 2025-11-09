@@ -9,11 +9,12 @@ import Home from "./pages/Home.tsx";
 import RecoverPassword from "./pages/RecoverPassword.tsx";
 import Profile from "./pages/Profile.tsx";
 import FeedbackHistory from './pages/FeedbackHistory';
-import CompanyProfile from "./pages/CompanyProfile.tsx"; // ← AGREGAR IMPORT
+import CompanyProfile from "./pages/CompanyProfile.tsx"; // ← AGREGAR IMPORT - Me lleva al perfil de la empresa dede el Home
 import UserProfile from "./pages/UserProfile.tsx";
 import Navbar from "./components/navbar.tsx";
 import Footer from "./components/footer.tsx";
 import ProtectedRoute from "./components/protectedRoute.tsx";
+
 
 const AppContent: React.FC = () => {
   const location = useLocation();
@@ -34,6 +35,8 @@ const AppContent: React.FC = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/auth/recover" element={<RecoverPassword />} />
           <Route path="/" element={<Home />} />
+          {/* Me lleva al perfil de la empresa desde el home*/}
+          <Route path="/company/:companyId" element={<CompanyProfile />} /> 
           
           {/* Rutas solo para employee y candidate */}
           <Route 

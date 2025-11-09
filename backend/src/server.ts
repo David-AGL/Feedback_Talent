@@ -9,6 +9,7 @@ import userRoutes from "./routes/userRoutes";
 import questionsRoutes from "./routes/questionsRoutes";
 import passwordResetRouter from "./routes/passwordReset"; 
 import feedbackHistoryRoutes from './routes/feedbackHistoryRoutes';
+import responsesRoutes from "./routes/responseRoutes";
 
 const PORT = Number(process.env.PORT || 4000);
 const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "http://localhost:5173";
@@ -46,3 +47,5 @@ app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
   console.log(`CORS permitido desde: ${CLIENT_ORIGIN}`);
 });
+
+app.use("/api/responses", responsesRoutes);

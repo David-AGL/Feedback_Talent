@@ -95,8 +95,10 @@ const CompanyProfile = () => {
    * Obtiene el ID de la empresa desde los parámetros de la URL
    * Ejemplo: /company-profile/123abc -> companyId = "123abc"
    */
-  const { companyId } = useParams<{ companyId: string }>();
-  
+  const { companyId: paramId } = useParams<{ companyId: string }>();
+  const { user } = useAuth();
+  const companyId = paramId || user?._id;
+    
   /**
    * Hook para obtener información del usuario autenticado
    * token: JWT token para autenticación en el backend
@@ -218,34 +220,22 @@ const CompanyProfile = () => {
   useEffect(() => {
     const fetchCompanyData = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:4000/api/company/profile/${companyId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}` // Envía token JWT para autenticación
-            }
-          }
-        );
-
-        const data = await response.json();
-        if (!response.ok) {
-          throw new Error(data.message || "Error al cargar perfil de empresa");
-        }
-        setCompanyData(data);
+        // Simulación: solo guardamos el nombre y el ID, ya que tu backend no tiene perfil detallado aún
+        setCompanyData({
+          _id: companyId!,
+          name: "Empresa seleccionada",
+          email: "",
+          idNumber: "",
+          createdAt: new Date().toISOString(),
+        });
       } catch (err: any) {
         setError(err.message);
       }
     };
 
-    // Solo ejecuta si tenemos un ID de empresa válido y el token
-    if (companyId && token && companyId !== 'undefined') {
-      fetchCompanyData();
-    } else {
-      // Si el ID no es válido, establece un error y detiene la carga
-      setError("ID de empresa no proporcionado o inválido.");
-      setLoading(false);
-    }
-  }, [companyId, token]); // Dependencias: se re-ejecuta si cambian
+    if (companyId) fetchCompanyData();
+  }, [companyId]);
+
 
   // ==========================================
   // EFECTO: CARGAR ESTADÍSTICAS POR CATEGORÍA
@@ -270,40 +260,36 @@ const CompanyProfile = () => {
     const fetchCategoryStats = async () => {
       try {
         const response = await fetch(
-          `http://localhost:4000/api/company/stats/${companyId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
+          `http://localhost:4000/api/responses/company/${companyId}/summary`
         );
 
         if (!response.ok) throw new Error("Error al cargar estadísticas");
 
         const data = await response.json();
-        setCategoryStats(data); // Guarda las estadísticas por categoría
 
-        // Calcula el promedio general (promedio de promedios)
-        if (data.length > 0) {
-          const totalAvg = data.reduce(
-            (sum: number, cat: CategoryStat) => sum + cat.avgScore, 
-            0
-          ) / data.length;
-          setOverallAverage(totalAvg);
+        // Mapeamos al formato que espera tu interfaz
+        const mapped: CategoryStat[] = data.map((item: any) => ({
+          _id: item._id.categoria,
+          avgScore: item.avgNumeric || 0,
+          count: item.count,
+        }));
+
+        setCategoryStats(mapped);
+
+        if (mapped.length > 0) {
+          const total = mapped.reduce((sum: number, c: CategoryStat) => sum + c.avgScore, 0) / mapped.length;
+          setOverallAverage(total);
         }
       } catch (err: any) {
         console.error("Error cargando estadísticas:", err);
-        // No mostramos error al usuario, solo en consola
-        // La UI mostrará "Aún no hay calificaciones"
       } finally {
-        setLoading(false); // Desactiva el loading sin importar el resultado
+        setLoading(false);
       }
     };
 
-    if (companyId && token && companyId !== 'undefined') {
-      fetchCategoryStats();
-    }
-  }, [companyId, token]);
+    if (companyId) fetchCategoryStats();
+  }, [companyId]);
+
 
   // ==========================================
   // EFECTO: CARGAR REVISORES
@@ -321,37 +307,44 @@ const CompanyProfile = () => {
    * 
    * Nota: Si el usuario no es la empresa, este efecto no hace nada
    */
-  useEffect(() => {
-    const fetchReviewers = async () => {
-      // Si no es una empresa, no carga revisores (protección)
-      if (role !== 'company') return;
 
-      try {
-        const response = await fetch(
-          `http://localhost:4000/api/company/reviewers/${companyId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
+
+
+ 
+    useEffect(() => {
+      const fetchReviewers = async () => {
+        // Si no es una empresa, no carga revisores (protección)
+        if (role !== 'company') return;
+
+        try {
+          const response = await fetch(
+            `http://localhost:4000/api/company/reviewers/${companyId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
             }
-          }
-        );
+          );
 
-        // Si falla, simplemente retorna sin hacer nada
-        // No mostramos error porque es información opcional
-        if (!response.ok) return;
+          // Si falla, simplemente retorna sin hacer nada
+          // No mostramos error porque es información opcional
+          if (!response.ok) return;
 
-        const data = await response.json();
-        setReviewers(data);         // Lista completa
-        setFilteredReviewers(data); // Lista filtrada (inicialmente igual)
-      } catch (err: any) {
-        console.error("Error cargando revisores:", err);
+          const data = await response.json();
+          setReviewers(data);         // Lista completa
+          setFilteredReviewers(data); // Lista filtrada (inicialmente igual)
+        } catch (err: any) {
+          console.error("Error cargando revisores:", err);
+        }
+      };
+
+      if (companyId && token && role === 'company' && companyId !== 'undefined') {
+        fetchReviewers();
       }
-    };
-
-    if (companyId && token && role === 'company' && companyId !== 'undefined') {
-      fetchReviewers();
-    }
-  }, [companyId, token, role]);
+    }, [companyId, token, role]);
+   
+  
+  
 
   // ==========================================
   // FUNCIÓN: MANEJAR EXPANSIÓN DE CATEGORÍA
@@ -806,7 +799,7 @@ const CompanyProfile = () => {
               Ancho: 33% del ancho total (4/12 columnas)
               En móvil: 100% del ancho
               ========================================== */}
-          {role === 'company' && (
+          {role === 'company' && companyId === user?._id && (
             <Box sx={{ 
               flex: '0 0 33%',                    // No crece, no se encoge, base 33%
               minWidth: { xs: '100%', md: 300 }   // 100% en móvil, mínimo 300px en desktop

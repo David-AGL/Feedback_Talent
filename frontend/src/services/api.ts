@@ -23,3 +23,8 @@ export const getResponseSummary= async(companyUserId: string) =>{
 export const getAllResponses= async(companyUserId: string) =>{
   return api.get(`/responses/company/${companyUserId}`);
 }
+
+export const getTopCompanies = async () => {
+  const res = await api.get('/responses/top-companies');
+  return res.data
+};
