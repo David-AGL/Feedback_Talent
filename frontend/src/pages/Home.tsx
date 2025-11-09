@@ -183,6 +183,7 @@ const Home: React.FC = () => {
             <option value="Motivación y compromiso">Motivación y compromiso</option>
             <option value="Procesos internos y gestión">Procesos internos y gestión</option>
             <option value="Salarios y beneficios">Salarios y beneficios</option>
+            {/*<option value="Pregunta abierta">Pregunta abierta</option>*/}
           </select>
         </div>
       </div>
