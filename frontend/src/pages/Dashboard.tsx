@@ -140,8 +140,11 @@ const Dashboard = () => {
               variant="contained"
               onClick={() => {
               const csvContent =
-                "Categoría,Promedio,Cantidad\n" +
-                data.map((row) => `${row.categoria},${row.promedio},${row.cantidad}`).join("\n");
+                "Categoría;Promedio;Cantidad\n" +
+                data.map((row) => {
+                  const promedio = row.promedio.toString().replace('.', ',');
+                  return `${row.categoria};${promedio};${row.cantidad}`;
+                }).join("\n");
               // Añadimos BOM para que Excel reconozca UTF-8
               const bom = "\uFEFF";
               const blob = new Blob([bom + csvContent], { type: "text/csv;charset=utf-8;" });

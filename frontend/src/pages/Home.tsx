@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Accordion, Button, Badge } from 'react-bootstrap';
 import { FaUsers, FaChartLine, FaChartBar, FaChevronDown } from 'react-icons/fa';
 import { getTopCompanies } from "../services/api";
+import PublicCompanySearchBar from '../components/PublicCompanySearchBar';
 
 const Home: React.FC = () => {
   const { isAuthenticated, role } = useAuth();
@@ -159,6 +160,11 @@ const Home: React.FC = () => {
             </Col>
           ))}
         </Row>
+
+        {/* Barra de búsqueda de empresas */}
+        <div className="mb-5">
+          <PublicCompanySearchBar />
+        </div>
 
        <div className="flex justify-center my-8">
         <div className="bg-white shadow-md rounded-xl px-6 py-3 flex items-center gap-4 border border-gray-100 hover:shadow-lg transition">
