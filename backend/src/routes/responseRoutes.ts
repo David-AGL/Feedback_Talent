@@ -284,4 +284,55 @@ router.get("/company/:companyUserId/reviewers", async (req: Request, res: Respon
   }
 });
 
+
+
+//Me aparecen las empresas con la mejor puntuación de una categoría - Depende de la selección del usuario
+router.get("/top-companies/category/:categoria", async (req: Request, res: Response) => {
+  try {
+    const { categoria } = req.params;
+    const mongoose = await import("mongoose");
+
+    const topCompaniesByCategory = await ResponseModel.aggregate([
+      { 
+        $match: { 
+          categoria: categoria,
+          $expr: { $isNumber: "$answer" } 
+        }
+      },
+      {
+        $group: {
+          _id: "$companyUserId",
+          avgRating: { $avg: "$answer" },
+          totalFeedbacks: { $sum: 1 }
+        }
+      },
+      { $sort: { avgRating: -1 } },
+      { $limit: 5 },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "companyInfo"
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          avgRating: { $round: ["$avgRating", 2] },
+          totalFeedbacks: 1,
+          companyName: { $arrayElemAt: ["$companyInfo.name", 0] },
+          companyEmail: { $arrayElemAt: ["$companyInfo.email", 0] },
+        }
+      }
+    ]);
+
+    res.status(200).json(topCompaniesByCategory);
+  } catch (error) {
+    console.error("Error obteniendo empresas por categoría:", error);
+    res.status(500).json({ message: "Error al obtener empresas por categoría" });
+  }
+});
+
+
 export default router;

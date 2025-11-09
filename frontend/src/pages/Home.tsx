@@ -10,19 +10,26 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
   const [activeKey, setActiveKey] = useState<string | null>('0');
   const [topCompanies, setTopCompanies] = useState<any[]>([]); //para guardar las empresas mejores calificadas
+  const [selectedCategory, setSelectedCategory] = useState("general");
 
   const handleAccordionToggle = (key: string) => {
     setActiveKey(activeKey === key ? null : key);
   };
 
   useEffect(() => {
-    getTopCompanies()
-      .then((data) => {
-        console.log("Empresas mejor calificadas:", data);
-        setTopCompanies(data);
-      })
-      .catch((err) => console.error("Error al obtener empresas:", err));
-  }, []);
+  const fetchCompanies = async () => {
+    const url =
+      selectedCategory === "general"
+        ? "http://localhost:4000/api/responses/top-companies"
+        : `http://localhost:4000/api/responses/top-companies/category/${encodeURIComponent(selectedCategory)}`;
+
+    const res = await fetch(url);
+    const data = await res.json();
+    setTopCompanies(data);
+  };
+
+  fetchCompanies();
+}, [selectedCategory]);
 
   // Noticias / Novedades
   const news = [
@@ -153,6 +160,33 @@ const Home: React.FC = () => {
           ))}
         </Row>
 
+       <div className="flex justify-center my-8">
+        <div className="bg-white shadow-md rounded-xl px-6 py-3 flex items-center gap-4 border border-gray-100 hover:shadow-lg transition">
+          <span className="text-primary text-xl">🎯</span>
+          <label
+            htmlFor="categoria"
+            className="font-semibold text-gray-700 tracking-wide"
+            style={{ fontFamily: 'inherit' }}
+          >
+            Filtrar por categoría:
+          </label>
+          <select
+            id="categoria"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="ml-2 border border-gray-200 rounded-lg px-3 py-1.5 text-gray-800 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+          >
+            <option value="general">General</option>
+            <option value="Cultura empresarial percibida">Cultura empresarial percibida</option>
+            <option value="Cultura empresarial y ambiente laboral">Cultura empresarial y ambiente laboral</option>
+            <option value="Desarrollo y prospectiva profesional">Desarrollo y prospectiva profesional</option>
+            <option value="Motivación y compromiso">Motivación y compromiso</option>
+            <option value="Procesos internos y gestión">Procesos internos y gestión</option>
+            <option value="Salarios y beneficios">Salarios y beneficios</option>
+          </select>
+        </div>
+      </div>
+
         {/* Empresas mejor calificadas */}
         <div className="bg-white p-4 rounded shadow-sm mb-5">
           <h3
@@ -171,13 +205,29 @@ const Home: React.FC = () => {
               {topCompanies.map((company) => (
                 <Col md={4} key={company._id}>
                   <Card
-                    className="border-0 shadow-sm h-100 text-center hover-shadow transition"
+                    className="border-0 h-100 text-center transition"
                     onClick={() => navigate(`/company/${company._id}`)}
                     title={`Ver perfil de ${company.companyName}`}
-                    style={{ cursor: "pointer" }}
+                    style={{
+                      cursor: "pointer",
+                      borderRadius: "15px",
+                      boxShadow: "0 4px 10px rgba(0, 0, 0, 0.05)",
+                      transition: "all 0.3s ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background =
+                        "linear-gradient(135deg, rgba(21,53,110,0.08) 0%, rgba(59,158,140,0.08) 100%)";
+                      e.currentTarget.style.transform = "translateY(-5px)";
+                      e.currentTarget.style.boxShadow = "0 6px 14px rgba(0,0,0,0.1)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "white";
+                      e.currentTarget.style.transform = "translateY(0)";
+                      e.currentTarget.style.boxShadow = "0 4px 10px rgba(0, 0, 0, 0.05)";
+                    }}
                   >
                     <Card.Body>
-                      <h5 className="fw-bold mb-2">
+                      <h5 className="fw-bold mb-2 text-dark">
                         {company.companyName || `Empresa #${company._id}`}
                       </h5>
                       <p className="text-muted mb-1">
