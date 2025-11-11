@@ -11,6 +11,7 @@ import {
   AccordionSummary,
   AccordionDetails,
   List,
+  ListItem,
   ListItemButton,
   ListItemAvatar,
   ListItemText,
@@ -67,8 +68,9 @@ interface CategoryStat {
 interface QuestionStat {
   questionId: string;   // ID único de la pregunta en MongoDB
   questionText: string; // Texto completo de la pregunta
-  avgScore: number;     // Promedio de respuestas para esta pregunta
+  avgScore?: number;    // Promedio de respuestas para esta pregunta (opcional)
   count: number;        // Cantidad de respuestas recibidas
+  answers?: string[];   // Respuestas de texto para preguntas abiertas
 }
 
 /**
@@ -277,8 +279,9 @@ const CompanyProfile = () => {
 
         setCategoryStats(mapped);
 
-        if (mapped.length > 0) {
-          const total = mapped.reduce((sum: number, c: CategoryStat) => sum + c.avgScore, 0) / mapped.length;
+        const numericCategories = mapped.filter(c => c._id !== 'Pregunta abierta');
+        if (numericCategories.length > 0) {
+          const total = numericCategories.reduce((sum: number, c: CategoryStat) => sum + c.avgScore, 0) / numericCategories.length;
           setOverallAverage(total);
         }
       } catch (err: any) {
@@ -747,7 +750,7 @@ const CompanyProfile = () => {
                         </Box>
                         
                         {/* Barra de progreso con el promedio de la categoría */}
-                        {renderScoreBar(category.avgScore)}
+                        {category._id !== 'Pregunta abierta' && renderScoreBar(category.avgScore)}
                       </Box>
                     </AccordionSummary>
                     
@@ -774,8 +777,22 @@ const CompanyProfile = () => {
                                 Pregunta {index + 1}: {question.questionText}
                               </Typography>
                               
-                              {/* Barra de progreso con el promedio de esta pregunta */}
-                              {renderScoreBar(question.avgScore)}
+                              {/* Si es pregunta abierta, muestra respuestas, si no, la barra */}
+                              {category._id === 'Pregunta abierta' ? (
+                                <List dense>
+                                  {question.answers && question.answers.length > 0 ? (
+                                    question.answers.map((answer, i) => (
+                                      <ListItem key={i} sx={{ pl: 0 }}>
+                                        <ListItemText primary={`- ${answer}`} />
+                                      </ListItem>
+                                    ))
+                                  ) : (
+                                    <Typography variant="caption">No hay respuestas de texto.</Typography>
+                                  )}
+                                </List>
+                              ) : (
+                                renderScoreBar(question.avgScore || 0)
+                              )}
                               
                               {/* Divisor entre preguntas (excepto la última) */}
                               {index < questionStats[category._id].length - 1 && (

@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Accordion, Button, Badge } from 'react-bootstrap';
-import { FaUsers, FaChartLine, FaChartBar, FaChevronDown } from 'react-icons/fa';
+import { FaUsers, FaChartLine, FaChartBar } from 'react-icons/fa';
 import { getTopCompanies } from "../services/api";
 import PublicCompanySearchBar from '../components/PublicCompanySearchBar';
 
@@ -302,7 +302,6 @@ const Home: React.FC = () => {
                     <h4 className="mb-0 h6">{item.title}</h4>
                     <small className="text-muted">{item.date}</small>
                   </div>
-                  <FaChevronDown className="ms-auto text-muted" aria-hidden="true" />
                 </Accordion.Header>
                 <Accordion.Body>
                   <p className="text-muted mb-0">{item.content}</p>
