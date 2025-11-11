@@ -373,9 +373,9 @@ const SurveyCandidate = () => {
                       <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
                         {/* Círculo con el número de pregunta */}
                         <Box
-                          sx={{
-                            minWidth: 40,
-                            height: 40,
+              sx={{
+                minWidth: { xs: 32, sm: 40 },
+                height: 40,
                             borderRadius: '50%', // Hace el círculo
                             background: 'var(--primary-color)',
                             display: 'flex',

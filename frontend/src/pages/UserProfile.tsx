@@ -144,8 +144,8 @@ const UserProfile = () => {
         <Container maxWidth="md">
           <Paper elevation={3} sx={{ p: 4, borderRadius: 4 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mb: 4 }}>
-            <Avatar sx={{ width: 100, height: 100, bgcolor: 'var(--primary-color)' }}>
-              <PersonIcon sx={{ fontSize: 60 }} />
+            <Avatar sx={{ width: { xs: 80, sm: 100 }, height: { xs: 80, sm: 100 }, bgcolor: 'var(--primary-color)' }}>
+              <PersonIcon sx={{ fontSize: { xs: 48, sm: 60 } }} />
             </Avatar>
             <Box>
               <Typography variant="h4" sx={{ fontWeight: 700 }}>

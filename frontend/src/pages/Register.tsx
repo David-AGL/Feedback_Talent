@@ -85,7 +85,7 @@ const Register = () => {  // Componente funcional para la página de registro
       justifyContent: 'center',
       alignItems: 'center',
       minHeight: '100vh',
-      width: '100vw',
+      width: '100%',
       backgroundColor: 'var(--bs-light)',
       padding: '16px'
     }}>

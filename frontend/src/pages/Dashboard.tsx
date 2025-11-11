@@ -108,7 +108,7 @@ const Dashboard = () => {
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           {/* Filtros */}
           <Box sx={{ display: "flex", gap: 3, flexWrap: "wrap", mb: 3 }}>
-            <FormControl sx={{ minWidth: 200 }}>
+            <FormControl sx={{ minWidth: { xs: '100%', sm: 200 } }}>
               <InputLabel>Categoría</InputLabel>
               <Select
                 value={selectedCategory}

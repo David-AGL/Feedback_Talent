@@ -242,9 +242,9 @@ setTimeout(() => {
                     >
                       <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
                         <Box
-                          sx={{
-                            minWidth: 40,
-                            height: 40,
+              sx={{
+                minWidth: { xs: 32, sm: 40 },
+                height: 40,
                             borderRadius: '50%',
                             background: 'var(--primary-color)',
                             display: 'flex',

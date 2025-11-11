@@ -233,7 +233,7 @@ export default function RecoverPassword() {
   // --- Render
   return (
     <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", p: 2 }}>
-      <Box sx={{ width: 420, bgcolor: "background.paper", p: 4, borderRadius: 3, boxShadow: 3 }}>
+      <Box sx={{ width: { xs: '100%', sm: 420 }, bgcolor: "background.paper", p: 4, borderRadius: 3, boxShadow: 3 }}>
         <Typography variant="h4" align="center" gutterBottom>
           Recuperar contraseña
         </Typography>

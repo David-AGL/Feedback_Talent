@@ -362,14 +362,15 @@ const FeedbackHistory: React.FC = () => {
           {Object.entries(groupedByCompany).map(([companyId, data], idx) => (
             <Accordion.Item eventKey={idx.toString()} key={companyId} className="mb-3">
               <Accordion.Header>
-                <div className="d-flex align-items-center w-100">
+                {/* En móviles apilamos, en pantallas >= sm mostramos en fila */}
+                <div className="d-flex flex-column flex-sm-row align-items-start w-100">
                   <FaBuilding className="me-2 text-primary" aria-hidden="true" />
                   <div className="flex-grow-1">
                     <h6 className="mb-0">{data.company.name}</h6>
                     <small className="text-muted">{data.company.email}</small>
                   </div>
-                  <div className="d-flex align-items-center ms-auto me-3">
-                    <Badge bg="secondary" className="me-3">
+                  <div className="d-flex align-items-center mt-2 mt-sm-0 ms-sm-auto me-0 gap-2">
+                    <Badge bg="secondary" className="me-2">
                       {data.feedbacks.length} feedback(s)
                     </Badge>
                     <Button
@@ -391,14 +392,15 @@ const FeedbackHistory: React.FC = () => {
                     <Col md={12} key={feedback._id} className="mb-3">
                       <Card className="border">
                         <Card.Body>
-                          <div className="d-flex justify-content-between align-items-start mb-2">
+                          {/* Encabezado del feedback: apilar en móviles, fila en md+ */}
+                          <div className="d-flex flex-column flex-md-row justify-content-between align-items-start mb-2">
                             <div className="flex-grow-1">
                               <Badge bg="primary" className="mb-2">
                                 {feedback.categoria}
                               </Badge>
-                              <h6 className="fw-bold">{feedback.question.contenido}</h6>
+                              <h6 className="fw-bold" style={{ wordBreak: 'break-word' }}>{feedback.question.contenido}</h6>
                             </div>
-                            <div className="d-flex gap-2">
+                            <div className="d-flex gap-2 mt-2 mt-md-0">
                               <Button
                                 variant="outline-primary"
                                 size="sm"

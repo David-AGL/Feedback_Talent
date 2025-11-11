@@ -596,13 +596,13 @@ const CompanyProfile = () => {
             <Avatar
               alt={`Logo de ${companyData.name}`}
               sx={{
-                width: 100,
-                height: 100,
+                width: { xs: 80, sm: 100 },
+                height: { xs: 80, sm: 100 },
                 bgcolor: 'white',   // Fondo blanco
                 color: 'var(--primary-color)'
               }}
             >
-              <BusinessIcon sx={{ fontSize: 60 }} />
+              <BusinessIcon sx={{ fontSize: { xs: 48, sm: 60 } }} />
             </Avatar>
             
             {/* Información textual de la empresa */}
@@ -644,7 +644,7 @@ const CompanyProfile = () => {
                 gap: 2 
               }}>
                 {/* Ícono de estrella */}
-                <StarIcon sx={{ fontSize: 60 }} />
+                <StarIcon sx={{ fontSize: { xs: 40, sm: 60 } }} />
                 
                 {/* Información del promedio */}
                 <Box sx={{ flex: 1 }}>
@@ -657,7 +657,7 @@ const CompanyProfile = () => {
                 </Box>
                 
                 {/* Ícono decorativo de tendencia */}
-                <TrendingUpIcon sx={{ fontSize: 60, opacity: 0.5 }} />
+                <TrendingUpIcon sx={{ fontSize: { xs: 40, sm: 60 }, opacity: 0.5 }} />
               </Box>
             </CardContent>
           </Card>
@@ -857,7 +857,7 @@ const CompanyProfile = () => {
                     Cada item es clickeable y redirige al perfil del usuario
                     ========================================== */}
                 <List sx={{ 
-                  maxHeight: 500,    // Altura máxima de 500px
+                  maxHeight: { xs: 300, md: 500 },    // Altura máxima responsive: 300px en móvil, 500px en desktop
                   overflow: 'auto'   // Scroll vertical si excede la altura
                 }}>
                   {/* Si no hay usuarios (por búsqueda o porque no hay calificaciones) */}
