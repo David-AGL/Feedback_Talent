@@ -1,0 +1,24 @@
+# robots.txt para Feedback_Talent
+# Este archivo indica a los motores de búsqueda qué rutas pueden indexar
+# y cuáles deben evitar. Más información: https://www.robotstxt.org/
+
+# Regla por defecto: aplica a todos los rastreadores
+User-agent: *
+
+# Permitir el acceso a la mayoría del sitio (páginas públicas de la SPA)
+Allow: /
+
+# Bloquear rutas que no deben ser indexadas (API, administración, endpoints privados)
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+
+# Indica la ubicación del sitemap. Reemplaza `https://example.com` por tu dominio
+# (por ejemplo: https://mi-dominio.com/sitemap.xml)
+Sitemap: https://example.com/sitemap.xml
+
+# Notas:
+# - Si tienes un entorno de staging o preview público, sirve allí un robots.txt
+#   que bloquee todo para evitar indexar entornos no productivos:
+#     User-agent: *\n#     Disallow: /
+# - Genera y publica un sitemap.xml para mejorar la indexación de tu contenido.

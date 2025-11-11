@@ -21,7 +21,7 @@ const MyNavbar: React.FC = () => {
         <Navbar.Brand as={Link} to="/">
           <img
             src="../pagina-principal.png"
-            alt="Logo"
+            alt="Logo de Feedback Talent"
             width="40"
             height="40"
             className="d-inline-block align-top me-2"

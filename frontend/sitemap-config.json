@@ -1,0 +1,16 @@
+{
+  "baseUrl": "https://example.com",
+  "defaultLastMod": "2025-11-10",
+  "routes": [
+    { "path": "/", "changefreq": "daily", "priority": "1.0" },
+    { "path": "/login", "changefreq": "monthly", "priority": "0.5" },
+    { "path": "/register", "changefreq": "monthly", "priority": "0.5" },
+    { "path": "/recover-password", "changefreq": "monthly", "priority": "0.3" },
+    { "path": "/dashboard", "changefreq": "weekly", "priority": "0.8" },
+    { "path": "/profile", "changefreq": "weekly", "priority": "0.7" },
+    { "path": "/feedback-history", "changefreq": "weekly", "priority": "0.6" },
+    { "path": "/record", "changefreq": "weekly", "priority": "0.6" },
+    { "path": "/survey/candidate", "changefreq": "monthly", "priority": "0.5" },
+    { "path": "/survey/employee", "changefreq": "monthly", "priority": "0.5" }
+  ]
+}

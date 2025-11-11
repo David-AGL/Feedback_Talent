@@ -290,7 +290,7 @@ const FeedbackHistory: React.FC = () => {
       <Card className="mb-4 shadow-sm">
         <Card.Body>
           <div className="d-flex align-items-center mb-3">
-            <FaFilter className="me-2" />
+            <FaFilter className="me-2" aria-hidden="true" />
             <h5 className="mb-0">Filtros</h5>
           </div>
           <Row>
@@ -363,7 +363,7 @@ const FeedbackHistory: React.FC = () => {
             <Accordion.Item eventKey={idx.toString()} key={companyId} className="mb-3">
               <Accordion.Header>
                 <div className="d-flex align-items-center w-100">
-                  <FaBuilding className="me-2 text-primary" />
+                  <FaBuilding className="me-2 text-primary" aria-hidden="true" />
                   <div className="flex-grow-1">
                     <h6 className="mb-0">{data.company.name}</h6>
                     <small className="text-muted">{data.company.email}</small>
@@ -380,7 +380,7 @@ const FeedbackHistory: React.FC = () => {
                         handleDeleteByCompany(companyId, data.company.name);
                       }}
                     >
-                      <FaTrash /> Eliminar Todos
+                      <FaTrash aria-hidden="true" /> Eliminar Todos
                     </Button>
                   </div>
                 </div>
@@ -404,14 +404,14 @@ const FeedbackHistory: React.FC = () => {
                                 size="sm"
                                 onClick={() => handleEditClick(feedback)}
                               >
-                                <FaEdit />
+                                <FaEdit aria-hidden="true" />
                               </Button>
                               <Button
                                 variant="outline-danger"
                                 size="sm"
                                 onClick={() => handleDelete(feedback._id)}
                               >
-                                <FaTrash />
+                                <FaTrash aria-hidden="true" />
                               </Button>
                             </div>
                           </div>
@@ -422,7 +422,7 @@ const FeedbackHistory: React.FC = () => {
                           </div>
 
                           <div className="d-flex align-items-center text-muted">
-                            <FaCalendar className="me-2" />
+                            <FaCalendar className="me-2" aria-hidden="true" />
                             <small>
                               Enviado el {formatDate(feedback.createdAt)}
                               {feedback.createdAt !== feedback.updatedAt && (

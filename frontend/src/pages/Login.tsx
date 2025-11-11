@@ -1,4 +1,5 @@
 import { useForm } from "react-hook-form";  // Importa useForm para manejar formularios con validación
+import { Helmet } from 'react-helmet-async';
 import { Button, TextField, Typography, Box, Paper, Alert } from "@mui/material";  // Importa componentes de Material-UI
 import { useNavigate } from "react-router-dom";  // Hook para navegar entre rutas
 import { login } from "../services/api";  // Importa la función de login del servicio API
@@ -63,17 +64,19 @@ const Login = () => {  // Componente funcional para la página de login
   };
 
   return (  // Renderiza el componente
-    <Box  // Contenedor principal que abarca toda la pantalla
-      sx={{  // Estilos inline con MUI sx
-        display: 'flex',  // Usa flexbox para centrar
-        justifyContent: 'center',  // Centra horizontalmente
-        alignItems: 'center',  // Centra verticalmente
-        height: '100vh',  // Altura mínima igual al viewport
-        width: 'auto',  // Ancho completo de la ventana
-        backgroundColor: 'background.default',  // Fondo claro del tema
-        p: 2  // Padding de 16px en todos los lados
-      }}
-    >
+    <main style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100vh',
+      width: 'auto',
+      backgroundColor: 'var(--bs-light)',
+      padding: '16px'
+    }}>
+      <Helmet>
+        <title>Iniciar Sesión - Feedback Talent</title>
+        <meta name="description" content="Inicia sesión en Feedback Talent para acceder a tu perfil y dar o recibir feedback profesional." />
+      </Helmet>
       <Paper  // Tarjeta con sombra para el formulario
         elevation={3}  // Sombra nivel 3 de MUI
         sx={{  // Estilos específicos para Paper
@@ -87,6 +90,7 @@ const Login = () => {  // Componente funcional para la página de login
       >
         <Typography  // Título del formulario
           variant="h4"  // Estilo h4 del tema
+          component="h1"
           align="center"  // Texto centrado
           gutterBottom  // Margen inferior automático
           sx={{ mb: 3 }}  // Margen inferior de 24px
@@ -153,7 +157,7 @@ const Login = () => {  // Componente funcional para la página de login
           </Typography>
         </Box>
       </Paper>
-    </Box>
+    </main>
   );
 };
 

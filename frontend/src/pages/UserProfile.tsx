@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Container,
@@ -134,9 +135,14 @@ const UserProfile = () => {
   const canEdit = user?._id === userId || user?.role === 'company';
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5', py: 6 }}>
-      <Container maxWidth="md">
-        <Paper elevation={3} sx={{ p: 4, borderRadius: 4 }}>
+    <>
+      <Helmet>
+        <title>{`Perfil de ${userData.name} - Feedback Talent`}</title>
+        <meta name="description" content={`Explora el perfil de ${userData.name} en Feedback Talent.`} />
+      </Helmet>
+      <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5', py: 6 }}>
+        <Container maxWidth="md">
+          <Paper elevation={3} sx={{ p: 4, borderRadius: 4 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mb: 4 }}>
             <Avatar sx={{ width: 100, height: 100, bgcolor: 'var(--primary-color)' }}>
               <PersonIcon sx={{ fontSize: 60 }} />
@@ -236,8 +242,9 @@ const UserProfile = () => {
             )}
           </form>
         </Paper>
-      </Container>
-    </Box>
+        </Container>
+      </Box>
+    </>
   );
 };
 

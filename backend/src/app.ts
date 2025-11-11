@@ -6,12 +6,13 @@ import passwordResetRouter from "./routes/passwordReset";
 import responseRoutes from "./routes/responseRoutes";
 import companyProfileRoutes from "./routes/companyProfileRoutes";
 import userProfileRoutes from "./routes/userProfileRoutes";
+import sitemapRoutes from "./routes/sitemapRoutes";
 
 const app = express();
 
 // CORS configuration
 app.use(cors({
-  origin: "http://localhost:5173",  // Puerto default de Vite
+  origin: ["http://localhost:5173", "http://localhost:5174"],  // Puertos de Vite
   methods: ["GET", "POST", "PUT", "DELETE"],  // Métodos permitidos
   credentials: true  
 }));
@@ -24,5 +25,7 @@ app.use("/api/auth", passwordResetRouter); // Rutas de reseteo de contraseña
 app.use("/api/responses", responseRoutes);
 app.use("/api/company", companyProfileRoutes); 
 app.use("/api/users", userProfileRoutes);
+// Sitemap dinámico en la raíz: /sitemap.xml
+app.use(sitemapRoutes);
 
 export default app;

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Container,
@@ -557,18 +558,25 @@ const CompanyProfile = () => {
   // ==========================================
 
   return (
-    <Box sx={{ 
-      minHeight: '100vh',   // Altura mínima de toda la pantalla
-      bgcolor: '#f5f5f5',   // Fondo gris muy claro
-      py: 6                 // Padding vertical de 48px
-    }}>
-      <Container maxWidth="lg">
-        
-        {/* ==========================================
-            SECCIÓN: ENCABEZADO DEL PERFIL
+    <main>
+      <Helmet>
+        <title>{`Perfil de ${companyData.name} - Feedback Talent`}</title>
+        <meta name="description" content={`Explora el perfil y las estadísticas de feedback de ${companyData.name} en Feedback Talent.`} />
+      </Helmet>
+      <Box sx={{ 
+        minHeight: '100vh',   // Altura mínima de toda la pantalla
+        bgcolor: '#f5f5f5',   // Fondo gris muy claro
+        py: 6                 // Padding vertical de 48px
+      }}>
+        <Container maxWidth="lg">
+          
+          {/* ==========================================
+              SECCIÓN: ENCABEZADO DEL PERFIL
             Muestra información básica de la empresa con diseño destacado
             ========================================== */}
         <Paper
+          component="section"
+          aria-labelledby="company-profile-header"
           elevation={3}  // Sombra nivel 3
           sx={{
             p: 4,        // Padding de 32px
@@ -586,6 +594,7 @@ const CompanyProfile = () => {
           }}>
             {/* Avatar/Logo de la empresa */}
             <Avatar
+              alt={`Logo de ${companyData.name}`}
               sx={{
                 width: 100,
                 height: 100,
@@ -598,7 +607,7 @@ const CompanyProfile = () => {
             
             {/* Información textual de la empresa */}
             <Box sx={{ flex: 1 }}>  {/* flex: 1 para ocupar espacio restante */}
-              <Typography variant="h3" sx={{ fontWeight: 700, mb: 1 }}>
+              <Typography variant="h3" component="h1" id="company-profile-header" sx={{ fontWeight: 700, mb: 1 }}>
                 {companyData.name}
               </Typography>
               <Typography variant="h6" sx={{ opacity: 0.9, mb: 1 }}>
@@ -620,6 +629,8 @@ const CompanyProfile = () => {
             ========================================== */}
         {categoryStats.length > 0 && (
           <Card
+            component="section"
+            aria-labelledby="general-stats-header"
             sx={{
               mb: 4,  // Margen inferior
               background: 'var(--secondary-color)',
@@ -637,7 +648,7 @@ const CompanyProfile = () => {
                 
                 {/* Información del promedio */}
                 <Box sx={{ flex: 1 }}>
-                  <Typography variant="h6" sx={{ mb: 1 }}>
+                  <Typography variant="h6" component="h2" id="general-stats-header" sx={{ mb: 1 }}>
                     Calificación General
                   </Typography>
                   <Typography variant="h3" sx={{ fontWeight: 700 }}>
@@ -676,9 +687,9 @@ const CompanyProfile = () => {
           <Box sx={{ 
             flex: role === 'company' ? '1 1 66%' : '1 1 100%'  // flex-grow, flex-shrink, flex-basis
           }}>
-            <Paper elevation={3} sx={{ p: 3, borderRadius: 4 }}>
+            <Paper component="section" aria-labelledby="category-stats-header" elevation={3} sx={{ p: 3, borderRadius: 4 }}>
               {/* Título de la sección */}
-              <Typography variant="h5" sx={{ mb: 3, fontWeight: 700 }}>
+              <Typography variant="h5" component="h2" id="category-stats-header" sx={{ mb: 3, fontWeight: 700 }}>
                 📊 Estadísticas por Categoría
               </Typography>
 
@@ -805,6 +816,8 @@ const CompanyProfile = () => {
               minWidth: { xs: '100%', md: 300 }   // 100% en móvil, mínimo 300px en desktop
             }}>
               <Paper 
+                component="section"
+                aria-labelledby="reviewers-list-header"
                 elevation={3} 
                 sx={{ 
                   p: 3,                    // Padding de 24px
@@ -814,7 +827,7 @@ const CompanyProfile = () => {
                 }}
               >
                 {/* Título de la sección */}
-                <Typography variant="h5" sx={{ mb: 3, fontWeight: 700 }}>
+                <Typography variant="h5" component="h2" id="reviewers-list-header" sx={{ mb: 3, fontWeight: 700 }}>
                   👥 Usuarios que Califican
                 </Typography>
 
@@ -878,7 +891,7 @@ const CompanyProfile = () => {
                             Círculo con ícono de persona
                             ========================================== */}
                         <ListItemAvatar>
-                          <Avatar sx={{ bgcolor: 'var(--primary-color)' }}>
+                          <Avatar alt={`Avatar de ${reviewer.name}`} sx={{ bgcolor: 'var(--primary-color)' }}>
                             <PersonIcon />
                           </Avatar>
                         </ListItemAvatar>
@@ -946,8 +959,9 @@ const CompanyProfile = () => {
         </Box>
         {/* Fin del layout principal con flexbox */}
         
-      </Container>
-    </Box>
+        </Container>
+      </Box>
+    </main>
   );
 };
 

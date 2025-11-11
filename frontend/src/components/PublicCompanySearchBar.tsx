@@ -68,8 +68,8 @@ const PublicCompanySearchBar: React.FC = () => {
   return (
     <div ref={searchRef} className="position-relative">
       <div className="input-group">
-        <span className="input-group-text bg-white border-end-0">
-          <FaSearch />
+        <span className="input-group-text bg-white border-end-0" aria-hidden="true">
+          <FaSearch aria-hidden="true" />
         </span>
         <Form.Control
           type="text"
@@ -99,7 +99,7 @@ const PublicCompanySearchBar: React.FC = () => {
                   <Image src={company.profileImageUrl} roundedCircle width="40" height="40" className="me-3" />
                 ) : (
                   <div className="me-3 bg-light rounded-circle d-flex align-items-center justify-content-center" style={{ width: 40, height: 40 }}>
-                    <FaBuilding />
+                    <FaBuilding aria-hidden="true" />
                   </div>
                 )}
                 {company.companyName}

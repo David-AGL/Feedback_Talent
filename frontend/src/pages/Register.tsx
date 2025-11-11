@@ -1,4 +1,5 @@
 import { useForm, Controller } from "react-hook-form";  // Importa useForm para manejar formularios y Controller para componentes controlados
+import { Helmet } from 'react-helmet-async';
 import { Button, TextField, Typography, Box, Paper, Alert, MenuItem, Select, FormControl, InputLabel } from "@mui/material";  // Importa componentes de Material-UI
 import { useNavigate } from "react-router-dom";  // Hook para navegar entre rutas
 import { useState } from "react";  // Hook para manejar estados locales
@@ -79,17 +80,19 @@ const Register = () => {  // Componente funcional para la página de registro
   };
 
   return (  // Renderiza el componente
-    <Box  // Contenedor principal que abarca toda la pantalla
-      sx={{  // Estilos inline
-        display: 'flex',  // Usa flexbox
-        justifyContent: 'center',  // Centra horizontalmente
-        alignItems: 'center',  // Centra verticalmente
-        minHeight: '100vh',  // Altura mínima del viewport
-        width: '100vw',  // Ancho completo
-        backgroundColor: 'background.default',  // Fondo del tema
-        p: 2  // Padding de 16px
-      }}
-    >
+    <main style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      minHeight: '100vh',
+      width: '100vw',
+      backgroundColor: 'var(--bs-light)',
+      padding: '16px'
+    }}>
+      <Helmet>
+        <title>Registro - Feedback Talent</title>
+        <meta name="description" content="Regístrate en Feedback Talent como persona o empresa para empezar a dar y recibir feedback constructivo." />
+      </Helmet>
       <Paper  // Tarjeta con sombra para el formulario
         elevation={3}  // Nivel de sombra
         sx={{  // Estilos
@@ -103,6 +106,7 @@ const Register = () => {  // Componente funcional para la página de registro
       >
         <Typography  // Título
           variant="h4"  // Estilo h4
+          component="h1"
           align="center"  // Centrado
           gutterBottom  // Margen inferior
           sx={{ mb: 5 }}  // Margen adicional
@@ -262,7 +266,7 @@ const Register = () => {  // Componente funcional para la página de registro
           </Typography>
         </Box>
       </Paper>
-    </Box>
+    </main>
   );
 };
 
