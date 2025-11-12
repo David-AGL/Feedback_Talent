@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";  // Importa useForm para manejar formularios con validación
 import { Helmet } from 'react-helmet-async';
 import { Button, TextField, Typography, Box, Paper, Alert } from "@mui/material";  // Importa componentes de Material-UI
-import { useNavigate } from "react-router-dom";  // Hook para navegar entre rutas
+import { useNavigate, Link } from "react-router-dom";  // Hook para navegar entre rutas
 import { login } from "../services/api";  // Importa la función de login del servicio API
 import { useState } from "react";  // Hook para manejar estado local (error y loading)
 import { useAuth } from "../contexts/AuthContext"; // ← IMPORTAR useAuth
@@ -150,10 +150,10 @@ const Login = () => {  // Componente funcional para la página de login
         </form>
         <Box sx={{ mt: 2, textAlign: 'center', width: '100%' }}>  
           <Typography variant="body2" color="text.secondary">  
-            ¿No tienes cuenta? <a href="/register">Regístrate aquí</a>  
+            ¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link>  
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-            ¿Olvidaste tu contraseña? <a href="/auth/Recover">Recupérala aquí</a>
+            ¿Olvidaste tu contraseña? <Link to="/auth/recover">Recupérala aquí</Link>
           </Typography>
         </Box>
       </Paper>

@@ -20,7 +20,7 @@ const AppContent: React.FC = () => {
   const location = useLocation();
 
   const showNavbarAndFooter =
-    location.pathname !== '/login' && location.pathname !== '/auth/Recover' &&
+    location.pathname !== '/login' && location.pathname !== '/auth/recover' &&
     location.pathname !== '/register' && location.pathname !== '/recoverpassword' &&
     location.pathname !== '/auth/reset-password' && location.pathname !== '/auth/resend-pin' &&
     location.pathname !== '/auth/forgot-password' && location.pathname !== '/auth/verify-pin';
