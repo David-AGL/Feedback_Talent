@@ -7,6 +7,7 @@ import responseRoutes from "./routes/responseRoutes";
 import companyProfileRoutes from "./routes/companyProfileRoutes";
 import userProfileRoutes from "./routes/userProfileRoutes";
 import sitemapRoutes from "./routes/sitemapRoutes";
+import debugRoutes from "./routes/debugRoutes";
 
 const app = express();
 
@@ -41,5 +42,7 @@ app.use("/api/company", companyProfileRoutes);
 app.use("/api/users", userProfileRoutes);
 // Sitemap dinámico en la raíz: /sitemap.xml
 app.use(sitemapRoutes);
+// Rutas de depuración (útiles para validar integraciones en producción)
+app.use("/api/debug", debugRoutes);
 
 export default app;

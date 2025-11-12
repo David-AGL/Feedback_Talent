@@ -47,3 +47,18 @@ export async function sendMail({ to, subject, html, from }: SendMailPayload) {
     html,
   });
 }
+
+// Verifica la conectividad/configuración del transportador SMTP. Devuelve un objeto
+// con { ok: boolean, info?: any, error?: string } para ayudar en diagnósticos.
+export async function verifyTransport() {
+  if (!SMTP_USER || !SMTP_PASS) {
+    return { ok: false, error: "SMTP credentials not configured (mock mode)" };
+  }
+
+  try {
+    const info = await transporter.verify();
+    return { ok: true, info };
+  } catch (err: any) {
+    return { ok: false, error: err?.message || String(err), info: err };
+  }
+}
