@@ -1,24 +1,25 @@
 // backend/src/services/mailer.ts
 import nodemailer from "nodemailer";
 
-const user = process.env.GMAIL_USER ?? "";
-const pass = process.env.GMAIL_APP_PASSWORD ?? "";
-const defaultFrom = process.env.MAIL_FROM ?? process.env.GMAIL_USER ?? "";
+// Prefer explicit SMTP_* env vars; fall back to older GMAIL_* keys for compatibility
+const SMTP_HOST = process.env.SMTP_HOST || "smtp.gmail.com";
+const SMTP_PORT = Number(process.env.SMTP_PORT || 465);
+const SMTP_SECURE = String(process.env.SMTP_SECURE || "true") === "true";
+const SMTP_USER = process.env.SMTP_USER || process.env.GMAIL_USER || "";
+const SMTP_PASS = process.env.SMTP_PASS || process.env.GMAIL_APP_PASSWORD || "";
+const DEFAULT_FROM = process.env.MAIL_FROM || SMTP_USER || "";
 
-// Validación temprana (no truena en dev, pero avisa)
-if (!user || !pass) {
+if (!SMTP_USER || !SMTP_PASS) {
   console.warn(
-    "[mailer] GMAIL_USER o GMAIL_APP_PASSWORD no están configurados. " +
-      "El envío real fallará; revisa tu backend/.env"
+    "[mailer] SMTP_USER/SMTP_PASS no están configurados. El envío real fallará; usando modo mock (logs)."
   );
 }
 
-// Transport Gmail (SMTP)
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true, // 465 = SSL
-  auth: { user, pass },
+  host: SMTP_HOST,
+  port: SMTP_PORT,
+  secure: SMTP_SECURE,
+  auth: SMTP_USER && SMTP_PASS ? { user: SMTP_USER, pass: SMTP_PASS } : undefined,
 });
 
 export interface SendMailPayload {
@@ -28,11 +29,10 @@ export interface SendMailPayload {
   from?: string;
 }
 
-// Enviar correo (promesa)
 export async function sendMail({ to, subject, html, from }: SendMailPayload) {
-  if (!user || !pass) {
-    // Entorno sin credenciales: log “mock” para desarrollo
+  if (!SMTP_USER || !SMTP_PASS) {
     console.log("\n--- Mock Email (mailer disabled) ---");
+    console.log("From:", from || DEFAULT_FROM);
     console.log("To:   ", to);
     console.log("Subj: ", subject);
     console.log("HTML:\n", html);
@@ -41,7 +41,7 @@ export async function sendMail({ to, subject, html, from }: SendMailPayload) {
   }
 
   await transporter.sendMail({
-    from: from || defaultFrom,
+    from: from || DEFAULT_FROM,
     to,
     subject,
     html,
