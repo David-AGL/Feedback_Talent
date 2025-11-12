@@ -60,17 +60,24 @@ router.post("/forgot-password", async (req: Request, res: Response) => {
       // requestId se genera en el modelo con uuidv4
     });
 
-    await sendMail({
-      to: email,
-      subject: `${APP_NAME} · Recuperación de contraseña`,
-      html: `
-        <p>Recibimos una solicitud para restablecer la contraseña de tu cuenta.</p>
-        <p>Tu PIN es: <b style="font-size:20px">${pin}</b></p>
-        <p>ID de solicitud: <code>${doc.requestId}</code></p>
-        <p>Este código vence en ${PIN_TTL_MIN} minutos.</p>
-        <p>Si no fuiste tú, ignora este correo.</p>
-      `,
-    });
+    try {
+      await sendMail({
+        to: email,
+        subject: `${APP_NAME} · Recuperación de contraseña`,
+        html: `
+          <p>Recibimos una solicitud para restablecer la contraseña de tu cuenta.</p>
+          <p>Tu PIN es: <b style="font-size:20px">${pin}</b></p>
+          <p>ID de solicitud: <code>${doc.requestId}</code></p>
+          <p>Este código vence en ${PIN_TTL_MIN} minutos.</p>
+          <p>Si no fuiste tú, ignora este correo.</p>
+        `,
+      });
+    } catch (mailErr) {
+      console.error("/forgot-password sendMail error", mailErr);
+      // opcional: marcar la solicitud como expired para evitar uso accidental
+      await PasswordReset.findByIdAndUpdate(doc._id, { status: "expired" }).catch(() => {});
+      return bad(res, "No se pudo enviar el correo de recuperación", 500);
+    }
 
     return ok(res, { message: "PIN sent", requestId: doc.requestId });
   } catch (err) {
@@ -123,14 +130,19 @@ router.post("/resend-pin", async (req: Request, res: Response) => {
     await doc.resetPin(pinHash, PIN_TTL_MIN, MAX_ATTEMPTS);
 
     const user: any = (doc as any).userId;
-    await sendMail({
-      to: user.email,
-      subject: `${APP_NAME} · Nuevo PIN de recuperación`,
-      html: `
-        <p>Tu nuevo PIN es: <b style="font-size:20px">${pin}</b></p>
-        <p>ID de solicitud: <code>${doc.requestId}</code></p>
-      `,
-    });
+    try {
+      await sendMail({
+        to: user.email,
+        subject: `${APP_NAME} · Nuevo PIN de recuperación`,
+        html: `
+          <p>Tu nuevo PIN es: <b style="font-size:20px">${pin}</b></p>
+          <p>ID de solicitud: <code>${doc.requestId}</code></p>
+        `,
+      });
+    } catch (mailErr) {
+      console.error("/resend-pin sendMail error", mailErr);
+      return bad(res, "No se pudo reenviar el PIN", 500);
+    }
 
     return ok(res, { message: "PIN reenviado" });
   } catch (err) {
