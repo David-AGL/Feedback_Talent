@@ -21,7 +21,7 @@ const Home: React.FC = () => {
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
-        const data = await getTopCompanies();
+        const data = await getTopCompanies(selectedCategory);
         setTopCompanies(data);
       } catch (error) {
         console.error("Error fetching top companies:", error);

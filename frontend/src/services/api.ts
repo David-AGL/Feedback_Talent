@@ -7,6 +7,31 @@ export const api = axios.create({
   withCredentials: true, // Si usas cookies/session; remove si usas sólo Authorization header
 });
 
+// Attach Authorization header from localStorage token on every request
+api.interceptors.request.use((config) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (token && config && config.headers) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+  } catch (err) {
+    // ignore localStorage errors
+  }
+  return config;
+});
+
+// Optional: global response handler for 401 to clear invalid token
+api.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    if (err?.response?.status === 401) {
+      // Token invalid or not provided. Clear stored token to avoid loops.
+      try { localStorage.removeItem('token'); } catch {};
+    }
+    return Promise.reject(err);
+  }
+);
+
 export const login = async (email: string, password: string) => {
   return api.post("/auth/login", { email, password });  // Asume endpoint en backend
 };
@@ -26,7 +51,11 @@ export const getAllResponses= async(companyUserId: string) =>{
   return api.get(`/responses/company/${companyUserId}`);
 }
 
-export const getTopCompanies = async () => {
+export const getTopCompanies = async (category?: string) => {
+  if (category && category !== 'general') {
+    const res = await api.get(`/responses/top-companies/category/${encodeURIComponent(category)}`);
+    return res.data;
+  }
   const res = await api.get('/responses/top-companies');
-  return res.data
+  return res.data;
 };
