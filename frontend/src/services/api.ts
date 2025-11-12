@@ -1,8 +1,10 @@
 import axios from "axios";
 
+const API_BASE = (import.meta.env.VITE_API_BASE_URL as string) || "http://localhost:4000/api";
+
 const api = axios.create({
-  baseURL: "http://localhost:4000/api",  // URL de tu backend
-  withCredentials: true  // Si usas cookies/auth
+  baseURL: API_BASE,
+  withCredentials: true, // Si usas cookies/session; remove si usas sólo Authorization header
 });
 
 export const login = async (email: string, password: string) => {
