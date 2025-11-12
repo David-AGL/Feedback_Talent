@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import userRoutes from "./routes/userRoutes";
 import questionsRoutes from "./routes/questionsRoutes"; // Importa las rutas de preguntas
 import passwordResetRouter from "./routes/passwordReset";
@@ -9,7 +10,27 @@ import sitemapRoutes from "./routes/sitemapRoutes";
 
 const app = express();
 
-// Note: CORS is configured in server.ts so we avoid duplicate/conflicting middleware here.
+// Configure CORS using CLIENT_ORIGIN env so this runs before routes are mounted
+const rawOrigins = process.env.CLIENT_ORIGIN || "http://localhost:5173";
+const origins = rawOrigins.split(",").map((s) => s.trim()).filter(Boolean);
+console.log('Configured CLIENT_ORIGIN (app):', rawOrigins);
+console.log('Parsed allowed origins (app):', origins);
+
+const corsOptions = {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    console.log('CORS (app) check: incoming Origin header =', origin);
+    if (!origin || origins.includes(origin)) {
+      console.log('CORS (app) allowed for origin:', origin);
+      return callback(null, true);
+    }
+    console.log('CORS (app) denied for origin:', origin);
+    return callback(new Error('Not allowed by CORS'));
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use("/api/auth", userRoutes); 
