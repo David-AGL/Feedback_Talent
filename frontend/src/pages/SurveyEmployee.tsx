@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import CompanySearchBar from "../components/companySearchBar";
 import Swal from "sweetalert2";
+import { api } from "../services/api";
 
 interface SurveyForm {
   [key: string]: number | string;
@@ -40,12 +41,12 @@ const SurveyEmployee = () => {
     const fetchQuestions = async () => {
       try {
         setLoading(true);
-        const response = await fetch("http://localhost:4000/api/preguntas/employee");
-        const data = await response.json();
+        const response = await api.get("/preguntas/employee");
+        const data = response.data;
         if (!Array.isArray(data)) throw new Error("Datos inválidos de preguntas");
         setQuestions(data);
       } catch (err: any) {
-        setError("Error cargando preguntas: " + err.message);
+        setError("Error cargando preguntas: " + (err.response?.data?.message || err.message));
       } finally {
         setLoading(false);
       }
@@ -56,10 +57,8 @@ const SurveyEmployee = () => {
 
   const fetchEvaluatedCompanies = async () => {
     try {
-      const response = await fetch("http://localhost:4000/api/feedback-history/my-feedbacks", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await response.json();
+      const response = await api.get("/feedback-history/my-feedbacks");
+      const data = response.data;
       if (data.success) {
         const companyIds = data.data.map((item: any) => item.companyUserId);
         setEvaluatedCompanies([...new Set<string>(companyIds)]);
@@ -94,13 +93,8 @@ const SurveyEmployee = () => {
         companyUserId: selectedCompany._id, // ← USAR selectedCompany
         respuestas: data,
       };
-      const response = await fetch("http://localhost:4000/api/responses/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.message || "Error al enviar");
+      const response = await api.post("/responses/submit", payload);
+      const result = response.data;
       console.log("Respuestas enviadas", result);
 
       // Mostrar popup de confirmación de envío de feedback

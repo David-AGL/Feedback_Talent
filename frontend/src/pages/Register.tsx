@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { Button, TextField, Typography, Box, Paper, Alert, MenuItem, Select, FormControl, InputLabel } from "@mui/material";  // Importa componentes de Material-UI
 import { useNavigate } from "react-router-dom";  // Hook para navegar entre rutas
 import { useState } from "react";  // Hook para manejar estados locales
+import { api } from '../services/api';
 
 // Define la interfaz base con campos comunes para todos los tipos de usuarios
 interface BaseRegisterForm {
@@ -62,14 +63,8 @@ const Register = () => {  // Componente funcional para la página de registro
           ? { ...base, birthDate: (data as PersonRegisterForm).birthDate }
           : base;
 
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.message || "Error en el registro");
+      const res = await api.post('/auth/register', payload);
+      // axios will throw on non-2xx so if we get here it's OK
 
       navigate("/login");
     } catch (err: any) {

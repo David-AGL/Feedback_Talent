@@ -32,6 +32,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import StarIcon from '@mui/icons-material/Star';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import { useAuth } from '../contexts/AuthContext';
+import { api } from '../services/api';
 
 // ==========================================
 // INTERFACES Y TIPOS
@@ -262,13 +263,11 @@ const CompanyProfile = () => {
   useEffect(() => {
     const fetchCategoryStats = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:4000/api/responses/company/${companyId}/summary`
+        const response = await api.get(
+          `/responses/company/${companyId}/summary`
         );
 
-        if (!response.ok) throw new Error("Error al cargar estadísticas");
-
-        const data = await response.json();
+        const data = response.data;
 
         // Mapeamos al formato que espera tu interfaz
         const mapped: CategoryStat[] = data.map((item: any) => ({
@@ -321,20 +320,11 @@ const CompanyProfile = () => {
         if (role !== 'company') return;
 
         try {
-          const response = await fetch(
-            `http://localhost:4000/api/company/reviewers/${companyId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`
-              }
-            }
+          const response = await api.get(
+            `/company/reviewers/${companyId}`
           );
 
-          // Si falla, simplemente retorna sin hacer nada
-          // No mostramos error porque es información opcional
-          if (!response.ok) return;
-
-          const data = await response.json();
+          const data = response.data;
           setReviewers(data);         // Lista completa
           setFilteredReviewers(data); // Lista filtrada (inicialmente igual)
         } catch (err: any) {
@@ -380,18 +370,11 @@ const CompanyProfile = () => {
     // Si se está expandiendo (no colapsando), carga los datos
     if (isExpanded) {
       try {
-        const response = await fetch(
-          `http://localhost:4000/api/company/stats/${companyId}/category/${encodeURIComponent(categoria)}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
+        const response = await api.get(
+          `/company/stats/${companyId}/category/${encodeURIComponent(categoria)}`
         );
 
-        if (!response.ok) throw new Error("Error al cargar preguntas");
-
-        const data = await response.json();
+        const data = response.data;
         
         // Guarda las estadísticas de preguntas usando el nombre de categoría como clave
         // Esto permite acceder rápidamente a los datos: questionStats["Ambiente Laboral"]

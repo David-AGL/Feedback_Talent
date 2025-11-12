@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, ListGroup, Spinner, Image } from 'react-bootstrap';
 import { FaSearch, FaBuilding } from 'react-icons/fa';
+import { api } from '../services/api';
 
 interface Company {
   _id: string;
@@ -26,14 +27,10 @@ const PublicCompanySearchBar: React.FC = () => {
     const fetchCompanies = async () => {
       setLoading(true);
       try {
-        const response = await fetch(
-          `http://localhost:4000/api/auth/companies/search?q=${encodeURIComponent(searchTerm)}`
-        );
-        const data = await response.json();
-        // The search endpoint returns 'name', but the top companies endpoint returns 'companyName'.
-        // I will adapt to what the search endpoint returns, assuming it's 'name'.
-        // If not, I'll need to adjust. Let's assume the property is `name` for now.
-        const formattedData = data.map((c: any) => ({ ...c, companyName: c.name }));
+        const res = await api.get('/auth/companies/search', { params: { q: searchTerm } });
+        const data = res.data;
+        // Normalize company name fields coming from different endpoints
+        const formattedData = data.map((c: any) => ({ ...c, companyName: c.companyName || c.name }));
         setResults(formattedData);
       } catch (error) {
         console.error('Error searching companies:', error);

@@ -19,19 +19,17 @@ const Home: React.FC = () => {
   };
 
   useEffect(() => {
-  const fetchCompanies = async () => {
-    const url =
-      selectedCategory === "general"
-        ? "http://localhost:4000/api/responses/top-companies"
-        : `http://localhost:4000/api/responses/top-companies/category/${encodeURIComponent(selectedCategory)}`;
+    const fetchCompanies = async () => {
+      try {
+        const data = await getTopCompanies();
+        setTopCompanies(data);
+      } catch (error) {
+        console.error("Error fetching top companies:", error);
+      }
+    };
 
-    const res = await fetch(url);
-    const data = await res.json();
-    setTopCompanies(data);
-  };
-
-  fetchCompanies();
-}, [selectedCategory]);
+    fetchCompanies();
+  }, [selectedCategory]);
 
   // Noticias / Novedades
   const news = [

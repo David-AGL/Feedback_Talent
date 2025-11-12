@@ -8,8 +8,7 @@ import {
   Link,
   CircularProgress,
 } from "@mui/material";
-
-const API = import.meta.env.VITE_API_URL as string; // ej: "http://localhost:4000"
+import { api } from "../services/api";
 
 // --- Tipos de estado del wizard
  type Step = "email" | "pin" | "reset" | "done";
@@ -87,44 +86,6 @@ export default function RecoverPassword() {
   const canSubmitPin = useMemo(() => pin.trim().length >= 6 && requestId.trim().length > 0, [pin, requestId]);
   const passwordOk = useMemo(() => newPassword.length >= 8 && newPassword === confirmPassword, [newPassword, confirmPassword]);
 
-  // --- API helpers
-  async function postJSON<T = any>(
-    url: string,            // puede ser "/auth/forgot-password" o una URL absoluta
-    body?: unknown,
-    init?: RequestInit
-  ): Promise<T> {
-    // Si te pasan un path, préfix con API; si ya viene absoluta, úsala tal cual.
-    const isAbsolute = /^https?:\/\//i.test(url);
-    const fullUrl = isAbsolute ? url : `${API}${url}`;
-
-    const res = await fetch(fullUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", ...(init?.headers || {}) },
-      body: JSON.stringify(body ?? {}),
-      credentials: "include",
-      ...init,
-    });
-
-    // intenta parsear JSON; si falla, cae a texto
-    let data: any = null;
-    try {
-      data = await res.json();
-    } catch {
-      try {
-        data = await res.text();
-      } catch {}
-    }
-
-    if (!res.ok) {
-      const detail =
-        (data && (data.error || data.message)) ||
-        `Request failed: ${res.status}`;
-      throw new Error(detail);
-    }
-
-    return (data ?? {}) as T;
-  }
-
     // Paso 1: enviar email
   async function handleSendEmail(e: React.FormEvent) {
     e.preventDefault();
@@ -136,10 +97,11 @@ export default function RecoverPassword() {
     try {
       const normalizedEmail = email.trim().toLowerCase();
 
-      const data = await postJSON<{ message?: string; requestId?: string }>(
+      const response = await api.post<{ message?: string; requestId?: string }>(
         "/auth/forgot-password",
         { email: normalizedEmail }
       );
+      const data = response.data;
 
       if (data?.requestId) setRequestId(data.requestId);
 
@@ -165,10 +127,11 @@ export default function RecoverPassword() {
       const normalizedRequestId = requestId.trim();
       const cleanedPin = pin.replace(/\s+/g, "").trim(); // quita espacios internos
 
-      const data = await postJSON<{ resetToken: string }>(
+      const response = await api.post<{ resetToken: string }>(
         "/auth/verify-pin",
         { requestId: normalizedRequestId, pin: cleanedPin }
       );
+      const data = response.data;
 
       setResetToken(data.resetToken);
       setStep("reset");
@@ -188,7 +151,7 @@ export default function RecoverPassword() {
     try {
       const normalizedRequestId = requestId.trim();
 
-      await postJSON<{ message: string }>(
+      await api.post(
         "/auth/resend-pin",
         { requestId: normalizedRequestId }
       );
@@ -212,7 +175,7 @@ export default function RecoverPassword() {
 
     try {
       // No hagas trim del password: podría ser parte válida
-      await postJSON(
+      await api.post(
         "/auth/reset-password",
         { resetToken, newPassword }
       );

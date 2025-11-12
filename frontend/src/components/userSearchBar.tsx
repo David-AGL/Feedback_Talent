@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { api } from '../services/api';
 import {
   TextField,
   Autocomplete,
@@ -80,23 +81,11 @@ const UserSearchBar: React.FC<UserSearchBarProps> = ({
     const fetchUsers = async () => {
       setLoading(true); // Indica que está cargando
       try {
-        // Hace petición GET al backend con el término de búsqueda
-        const response = await fetch(
-          `http://localhost:4000/api/company/reviewers/${companyId}?search=${encodeURIComponent(inputValue)}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}` // Incluye token JWT en headers
-            }
-          }
-        );
-        
-        // Si la respuesta es exitosa, guarda los datos
-        if (response.ok) {
-          const data = await response.json();
-          setOptions(data);
-        } else {
-          setOptions([]); // Si hay error, limpia las opciones
-        }
+        const res = await api.get(`/company/reviewers/${companyId}`, {
+          params: { search: inputValue },
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setOptions(res.data || []);
       } catch (error) {
         console.error('Error buscando usuarios:', error);
         setOptions([]);

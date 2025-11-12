@@ -15,6 +15,7 @@ import {
   Accordion,
 } from 'react-bootstrap';
 import { FaEdit, FaTrash, FaBuilding, FaCalendar, FaFilter } from 'react-icons/fa';
+import { api } from '../services/api';
 
 interface Question {
   _id: string;
@@ -84,22 +85,12 @@ const FeedbackHistory: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      const response = await fetch('http://localhost:4000/api/feedback-history/my-feedbacks', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al obtener feedbacks');
-      }
-
-      const data = await response.json();
+      const response = await api.get('/feedback-history/my-feedbacks');
+      const data = response.data;
       setFeedbacks(data.data);
       setFilteredFeedbacks(data.data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error desconocido');
+    } catch (err: any) {
+      setError(err.response?.data?.message || err.message || 'Error desconocido');
     } finally {
       setLoading(false);
     }
@@ -129,21 +120,10 @@ const FeedbackHistory: React.FC = () => {
     if (!editingFeedback) return;
 
     try {
-      const response = await fetch(
-        `http://localhost:4000/api/feedback-history/${editingFeedback._id}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ answer: editAnswer }),
-        }
+      await api.put(
+        `/feedback-history/${editingFeedback._id}`,
+        { answer: editAnswer }
       );
-
-      if (!response.ok) {
-        throw new Error('Error al actualizar feedback');
-      }
 
       setSuccess('Feedback actualizado exitosamente');
       setShowEditModal(false);
@@ -162,16 +142,7 @@ const FeedbackHistory: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:4000/api/feedback-history/${feedbackId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al eliminar feedback');
-      }
+      await api.delete(`/feedback-history/${feedbackId}`);
 
       setSuccess('Feedback eliminado exitosamente');
       fetchFeedbacks(); // Recargar feedbacks
@@ -189,16 +160,7 @@ const FeedbackHistory: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:4000/api/feedback-history/company/${companyId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al eliminar feedbacks por empresa');
-      }
+      await api.delete(`/feedback-history/company/${companyId}`);
 
       setSuccess('Feedbacks eliminados exitosamente');
       fetchFeedbacks();

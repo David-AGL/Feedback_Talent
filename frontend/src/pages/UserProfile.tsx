@@ -19,6 +19,7 @@ import {
 } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import { useAuth } from '../contexts/AuthContext';
+import { api } from '../services/api';
 
 interface UserData {
   _id: string;
@@ -48,16 +49,8 @@ const UserProfile = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`http://localhost:4000/api/users/profile/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const data = await response.json();
-        if (!response.ok) {
-          throw new Error(data.message || 'Error al cargar el perfil del usuario');
-        }
+        const response = await api.get(`/users/profile/${userId}`);
+        const data = response.data;
         setUserData(data);
         setFormData({
           name: data.name,
@@ -65,16 +58,16 @@ const UserProfile = () => {
           role: data.role,
         });
       } catch (err: any) {
-        setError(err.message);
+        setError(err.response?.data?.message || err.message || 'Error al cargar el perfil del usuario');
       } finally {
         setLoading(false);
       }
     };
 
-    if (userId && token) {
+    if (userId) {
       fetchUserData();
     }
-  }, [userId, token]);
+  }, [userId]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>) => {
     const { name, value } = e.target;
@@ -87,24 +80,13 @@ const UserProfile = () => {
     setSuccess(null);
 
     try {
-      const response = await fetch(`http://localhost:4000/api/users/profile/${userId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || 'Error al actualizar el perfil');
-      }
+      const response = await api.put(`/users/profile/${userId}`, formData);
+      const data = response.data;
       setUserData(data);
       setSuccess('Perfil actualizado con éxito');
       setIsEditing(false);
     } catch (err: any) {
-      setError(err.message);
+      setError(err.response?.data?.message || err.message || 'Error al actualizar el perfil');
     }
   };
 

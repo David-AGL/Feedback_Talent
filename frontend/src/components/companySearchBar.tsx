@@ -43,11 +43,10 @@ const CompanySearchBar: React.FC<CompanySearchBarProps> = ({
     const fetchCompanies = async () => {
       setLoading(true);
       try {
-        const response = await fetch(
-          `http://localhost:4000/api/auth/companies/search?q=${encodeURIComponent(inputValue)}`
-        );
-        const data = await response.json();
-        setOptions(data);
+        // Use centralized API client so the base URL is controlled by Vite env (VITE_API_BASE_URL)
+        const { api } = await import('../services/api');
+        const res = await api.get('/auth/companies/search', { params: { q: inputValue } });
+        setOptions(res.data || []);
       } catch (error) {
         console.error('Error buscando empresas:', error);
         setOptions([]);

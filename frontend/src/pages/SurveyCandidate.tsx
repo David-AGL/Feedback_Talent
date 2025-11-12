@@ -20,6 +20,7 @@ import CompanySearchBar from "../components/companySearchBar";
 
 //Para hacer la confirmación de envío de feedback
 import Swal from "sweetalert2";
+import { api } from "../services/api";
 
 
 
@@ -104,8 +105,8 @@ const SurveyCandidate = () => {
         setLoading(true); // Indica que está cargando
         
         // Hace petición GET al backend para obtener preguntas de candidatos
-        const response = await fetch("http://localhost:4000/api/preguntas/candidate");
-        const data = await response.json();
+        const response = await api.get("/preguntas/candidate");
+        const data = response.data;
         
         // Valida que la respuesta sea un array
         if (!Array.isArray(data)) throw new Error("Datos inválidos de preguntas");
@@ -114,7 +115,7 @@ const SurveyCandidate = () => {
         setQuestions(data);
       } catch (err: any) {
         // Maneja errores y los muestra al usuario
-        setError("Error cargando preguntas: " + err.message);
+        setError("Error cargando preguntas: " + (err.response?.data?.message || err.message));
       } finally {
         // Siempre desactiva el loading al terminar
         setLoading(false);
@@ -173,17 +174,10 @@ const SurveyCandidate = () => {
       };
       
       // Hace petición POST al backend para guardar las respuestas
-      const response = await fetch("http://localhost:4000/api/responses/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload), // Convierte el payload a JSON
-      });
+      const response = await api.post("/responses/submit", payload);
       
       // Parsea la respuesta del servidor
-      const result = await response.json();
-      
-      // Si el servidor responde con error, lanza excepción
-      if (!response.ok) throw new Error(result.message || "Error al enviar");
+      const result = response.data;
       
       // Log de éxito en la consola
       console.log("Respuestas enviadas", result);
