@@ -13,9 +13,8 @@ Disallow: /api/
 Disallow: /admin/
 Disallow: /private/
 
-# Indica la ubicación del sitemap. Reemplaza `https://example.com` por tu dominio
-# (por ejemplo: https://mi-dominio.com/sitemap.xml)
-Sitemap: https://example.com/sitemap.xml
+# Indica la ubicación del sitemap para el dominio desplegado en Render
+Sitemap: https://feedback-talent.onrender.com/sitemap.xml
 
 # Notas:
 # - Si tienes un entorno de staging o preview público, sirve allí un robots.txt
