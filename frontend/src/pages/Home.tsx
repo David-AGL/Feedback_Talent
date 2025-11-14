@@ -4,6 +4,14 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Accordion, Button, Badge } from 'react-bootstrap';
 import { FaUsers, FaChartLine, FaChartBar } from 'react-icons/fa';
+import {
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Paper,
+  Box,
+} from "@mui/material";
 import { getTopCompanies } from "../services/api";
 import PublicCompanySearchBar from '../components/PublicCompanySearchBar';
 
@@ -176,34 +184,50 @@ const Home: React.FC = () => {
         </section>
 
         <section aria-labelledby="filter-heading">
-          <h2 id="filter-heading" className="visually-hidden">Filtro de Empresas</h2>
-          <div className="flex justify-center my-8">
-            <div className="bg-white shadow-md rounded-xl px-6 py-3 flex items-center gap-4 border border-gray-100 hover:shadow-lg transition">
-              <span className="text-primary text-xl" role="img" aria-label="target emoji">🎯</span>
-              <label
-                htmlFor="categoria"
-                className="font-semibold text-gray-700 tracking-wide"
-                style={{ fontFamily: 'inherit' }}
-              >
-                Filtrar por categoría:
-              </label>
-              <select
-                id="categoria"
+          <h2 id="filter-heading" className="visually-hidden">
+            Filtro de Empresas
+          </h2>
+          <Paper
+            elevation={2}
+            sx={{
+              p: 2,
+              mb: 4,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 2,
+            }}
+          >
+            <span style={{ fontSize: "1.5rem" }}>🎯</span>
+            <FormControl sx={{ minWidth: 240 }} size="small">
+              <InputLabel>Filtrar por categoría</InputLabel>
+              <Select
                 value={selectedCategory}
+                label="Filtrar por categoría"
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="ml-2 border border-gray-200 rounded-lg px-3 py-1.5 text-gray-800 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
               >
-                <option value="general">General</option>
-                <option value="Cultura empresarial percibida">Cultura empresarial percibida</option>
-                <option value="Cultura empresarial y ambiente laboral">Cultura empresarial y ambiente laboral</option>
-                <option value="Desarrollo y prospectiva profesional">Desarrollo y prospectiva profesional</option>
-                <option value="Motivación y compromiso">Motivación y compromiso</option>
-                <option value="Procesos internos y gestión">Procesos internos y gestión</option>
-                <option value="Salarios y beneficios">Salarios y beneficios</option>
-                {/*<option value="Pregunta abierta">Pregunta abierta</option>*/}
-              </select>
-            </div>
-          </div>
+                <MenuItem value="general">General</MenuItem>
+                <MenuItem value="Cultura empresarial percibida">
+                  Cultura empresarial percibida
+                </MenuItem>
+                <MenuItem value="Cultura empresarial y ambiente laboral">
+                  Cultura empresarial y ambiente laboral
+                </MenuItem>
+                <MenuItem value="Desarrollo y prospectiva profesional">
+                  Desarrollo y prospectiva profesional
+                </MenuItem>
+                <MenuItem value="Motivación y compromiso">
+                  Motivación y compromiso
+                </MenuItem>
+                <MenuItem value="Procesos internos y gestión">
+                  Procesos internos y gestión
+                </MenuItem>
+                <MenuItem value="Salarios y beneficios">
+                  Salarios y beneficios
+                </MenuItem>
+              </Select>
+            </FormControl>
+          </Paper>
         </section>
 
         {/* Empresas mejor calificadas */}

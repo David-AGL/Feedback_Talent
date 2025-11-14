@@ -165,8 +165,8 @@ const Register = () => {  // Componente funcional para la página de registro
                 fullWidth
                 label="Nombre"
                 {...register("name", { required: "Nombre es requerido" })}
-                error={!!errors}
-                //helperText={errors.name?.message}
+                error={!!(errors as any).name}
+                helperText={(errors as any).name?.message}
                 disabled={loading}
                 sx={{ mb: 5 }}
               />
@@ -174,8 +174,8 @@ const Register = () => {  // Componente funcional para la página de registro
                 fullWidth
                 label="Documento de identidad"
                 {...register("id", { required: "Documento de identidad es requerido" })}
-                error={!!errors}
-                //helperText={errors.id?.message}
+                error={!!(errors as any).id}
+                helperText={(errors as any).id?.message}
                 disabled={loading}
                 sx={{ mb: 5 }}
               />
@@ -184,8 +184,8 @@ const Register = () => {  // Componente funcional para la página de registro
                 label="Fecha de Nacimiento"
                 type="date"
                 {...register("birthDate", { required: "La fecha de nacimiento es requerida" })}
-                error={!!errors}
-                //helperText={errors.birthDate?.message}
+                error={!!(errors as any).birthDate}
+                helperText={(errors as any).birthDate?.message}
                 disabled={loading}
                 InputLabelProps={{ shrink: true }} // Hace que el label no se sobreponga al valor
                 sx={{ mb: 5 }}
@@ -221,8 +221,8 @@ const Register = () => {  // Componente funcional para la página de registro
                 fullWidth
                 label="Nombre de la Empresa"
                 {...register("companyName", { required: "Nombre de empresa es requerido" })}
-                error={!!errors}
-                //helperText={errors.companyName?.message}
+                error={!!(errors as any).companyName}
+                helperText={(errors as any).companyName?.message}
                 disabled={loading}
                 sx={{ mb: 5 }}
               />
@@ -230,8 +230,8 @@ const Register = () => {  // Componente funcional para la página de registro
                 fullWidth
                 label="NIT"
                 {...register("nit", { required: "NIT es requerido" })}
-                error={!!errors}
-                //helperText={errors.nit?.message}
+                error={!!(errors as any).nit}
+                helperText={(errors as any).nit?.message}
                 disabled={loading}
                 sx={{ mb: 5 }}
               />
