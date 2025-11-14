@@ -37,7 +37,8 @@ export async function sendMail({ to, subject, html, from }: SendMailPayload) {
     console.log("Subj: ", subject);
     console.log("HTML:\n", html);
     console.log("------------------------------------\n");
-    return;
+    // Resolve successfully in mock mode to prevent downstream errors
+    return Promise.resolve();
   }
 
   await transporter.sendMail({

@@ -193,12 +193,11 @@ const Home: React.FC = () => {
               p: 2,
               mb: 4,
               display: "flex",
-              justifyContent: "center",
+              justifyContent: "flex-start",
               alignItems: "center",
               gap: 2,
             }}
           >
-            <span style={{ fontSize: "1.5rem" }}>🎯</span>
             <FormControl sx={{ minWidth: 240 }} size="small">
               <InputLabel>Filtrar por categoría</InputLabel>
               <Select
